@@ -58,6 +58,10 @@ function loadFullWindow() {
       $("#grid-stack-item-3").width() - 50,
       $("#grid-stack-item-3").height() - 50
     );
+    fullChart4.setSize(
+      $("#grid-stack-item-4").width() - 50,
+      $("#grid-stack-item-4").height() - 50
+    );
     // console.log($("#grid-stack-item-1").width());
   });
 
@@ -89,9 +93,12 @@ function loadFullWindow() {
   drawFullChart2();
 
   drawFullChart3();
+
+  drawLineChart("fullchart4");
 }
 
 function handleUnloadFull() {
+  localStorage.clear();
   // clearInterval(updateFullInterval);
   // no need to clear the interval cause all the timers got cleaned when the browser closed
 }
@@ -345,35 +352,42 @@ function drawFullChart3() {
           // set up the updating of the chart each second
           var series = this.series[0];
           fullinterval3 = setInterval(function () {
-            var x = new Date().getTime(),
-              engagement = 0, // current time
-              y = Math.random();
-
-            $.ajax({
-              url: "http://49.232.60.34:5000/get_class_information",
-              type: "GET",
-              async: false,
-              success: function (res) {
-                console.log("getting data from backend");
-                data = JSON.parse(res);
-                // var engagement = 0;
-                data.forEach((d) => {
-                  engagement += parseFloat(d.engagement);
-                });
-                engagement /= data.length;
-                console.log("ajax success engagement:", engagement);
-              },
-            }).done(function () {
-              console.log("ajax done");
-            });
-
+            // var x = new Date().getTime(),
+            //   engagement = 0; // current time
+            // $.ajax({
+            //   url: "http://49.232.60.34:5000/get_class_information",
+            //   type: "GET",
+            //   async: false,
+            //   success: function (res) {
+            //     console.log("getting data from backend");
+            //     data = JSON.parse(res);
+            //     data.forEach((d) => {
+            //       engagement += parseFloat(d.engagement);
+            //     });
+            //     engagement /= data.length;
+            //     console.log("ajax success engagement:", engagement);
+            //     // localStorage.clear();
+            //     var eng_list = localStorage.getItem("engagement");
+            //     var time = new Date().getTime();
+            //     if (eng_list) {
+            //       var eng_list_obj = JSON.parse(eng_list);
+            //       eng_list_obj.push({ time, engagement });
+            //     } else {
+            //       var eng_list_obj = [{ time, engagement }];
+            //     }
+            //     console.log(eng_list_obj);
+            //     eng_list = JSON.stringify(eng_list_obj);
+            //     localStorage.setItem("engagement", eng_list);
+            //     console.log("localstorage:", localStorage);
+            //   },
+            // }).done(function () {
+            //   console.log("ajax done");
+            // });
             // var eng = doAjax("http://49.232.60.34:5000/get_class_information");
             // console.log("doajax:", eng);
-            console.log("engagement:", engagement);
-            console.log("y:", y);
-            y = engagement;
-            series.addPoint([x, y], true, true);
-          }, 5000);
+            // console.log("engagement:", engagement);
+            // series.addPoint([x, engagement], true, true);
+          }, 1000);
         },
       },
     },
@@ -450,6 +464,119 @@ function drawFullChart3() {
       },
     ],
   });
+
+  setInterval(() => {}, 1000);
+}
+
+function drawLineChart(container) {
+  var startTime = new Date().getTime();
+  function getData(n) {
+    var arr = [],
+      i,
+      x,
+      a,
+      b,
+      c,
+      spike;
+    for (
+      i = 0, x = Date.UTC(new Date().getUTCFullYear(), 0, 1) - n * 36e5;
+      i < n;
+      i = i + 1, x = x + 36e5
+    ) {
+      if (i % 100 === 0) {
+        a = 2 * Math.random();
+      }
+      if (i % 1000 === 0) {
+        b = 2 * Math.random();
+      }
+      if (i % 10000 === 0) {
+        c = 2 * Math.random();
+      }
+      if (i % 50000 === 0) {
+        spike = 10;
+      } else {
+        spike = 0;
+      }
+      arr.push([x, 2 * Math.sin(i / 100) + a + b + c + spike + Math.random()]);
+    }
+    return arr;
+  }
+  var n = 5000,
+    data = getData(n);
+
+  console.log(data);
+
+  console.time("line");
+  var lineChart = Highcharts.chart(container, {
+    chart: {
+      zoomType: "x",
+    },
+
+    title: {
+      text: "Highcharts drawing " + n + " points",
+    },
+
+    subtitle: {
+      text: "Using the Boost module",
+    },
+
+    tooltip: {
+      valueDecimals: 2,
+    },
+
+    xAxis: {
+      type: "datetime",
+      tickInterval: 10,
+      min: startTime,
+      // min: 1625842192120,
+    },
+
+    series: [
+      {
+        data: data,
+        lineWidth: 0.5,
+        name: "Hourly data points",
+      },
+    ],
+  });
+
+  var i = 1;
+  setInterval(() => {
+    var x = new Date().getTime(),
+      engagement = 0,
+      eng_list_json; // current time
+
+    $.ajax({
+      url: "http://49.232.60.34:5000/get_class_information",
+      type: "GET",
+      async: false,
+      success: function (res) {
+        console.log("getting data from backend");
+        data = JSON.parse(res);
+        data.forEach((d) => {
+          engagement += parseFloat(d.engagement);
+        });
+        engagement /= data.length;
+        console.log("ajax success engagement:", engagement);
+
+        var eng_list = localStorage.getItem("engagement");
+        eng_list_json = eng_list ? JSON.parse(eng_list) : [];
+        eng_list_json.push([x, engagement]);
+        console.log(eng_list_json);
+        eng_list = JSON.stringify(eng_list_json);
+        localStorage.setItem("engagement", eng_list);
+        console.log("localstorage:", localStorage);
+      },
+    }).done(function () {
+      console.log("ajax done");
+    });
+    if (lineChart) {
+      // lineChart.series[0].setData(getData(50));
+
+      lineChart.series[0].setData(eng_list_json);
+    }
+    i++;
+  }, 1000);
 }
 
 const containers = ["fullchart1", "fullchart2", "fullchart3"];
