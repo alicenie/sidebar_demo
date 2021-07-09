@@ -546,6 +546,8 @@ function drawMotorChart(container, name, theme) {
 
     if (MotorChart) {
       point = MotorChart.series[0].points[0];
+      console.log(MotorChart.series[0].points);
+      console.log(point.y);
       inc = Math.round((Math.random() - 0.5) * 100);
       newVal = point.y + inc;
 

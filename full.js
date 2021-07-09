@@ -1,6 +1,44 @@
-var fullinterval1, fullinterval2, fullinterval3;
+var fullinterval1, fullinterval2, fullinterval3, updateFullInterval;
+
+async function doAjax(ajaxurl) {
+  var engagement;
+  await $.ajax({
+    url: ajaxurl,
+    type: "GET",
+    success: function (res) {
+      console.log("getting data from backend");
+      data = JSON.parse(res);
+      // var engagement = 0;
+      data.forEach((d) => {
+        engagement += parseFloat(d.engagement);
+      });
+      engagement /= data.length;
+      console.log("ajax success engagement:", engagement);
+    },
+  });
+
+  return engagement;
+}
 
 function loadFullWindow() {
+  // updateFullInterval = setInterval(function () {
+  //   $.ajax({
+  //     url: "http://49.232.60.34:5000/get_class_information",
+  //     type: "GET",
+  //     success: function (res) {
+  //       console.log("getting data from backend");
+  //       data = JSON.parse(res);
+  //       var engagement = 0;
+  //       data.forEach((d) => {
+  //         engagement += parseFloat(d.engagement);
+  //       });
+  //       engagement /= data.length;
+  //       console.log("engagement:", engagement);
+  //       // drawFullChart3(engagement);
+  //     },
+  //   });
+  // }, 1000);
+
   let grid = GridStack.init({
     cellHeight: 100,
   });
@@ -39,7 +77,7 @@ function loadFullWindow() {
 
     // set theme
     for (const [key, value] of Object.entries(theme.full)) {
-      console.log(`${key}: ${value}`);
+      // console.log(`${key}: ${value}`);
       $(`#${key}`).css("border-color", `rgb(${value})`);
       $(`#${key}Check`).css("background-color", `rgba(${value},0.5)`);
       // $(`#${key}Check`).css("opacity", 0.5);
@@ -51,6 +89,11 @@ function loadFullWindow() {
   drawFullChart2();
 
   drawFullChart3();
+}
+
+function handleUnloadFull() {
+  // clearInterval(updateFullInterval);
+  // no need to clear the interval cause all the timers got cleaned when the browser closed
 }
 
 function drawFullChart1() {
@@ -196,7 +239,7 @@ function drawFullChart2() {
         load: function () {
           // set up the updating of the chart each second
           var series = this.series[0];
-          console.log(series);
+          // console.log(series);
           fullinterval2 = setInterval(function () {
             var data = [];
             data.push([
@@ -302,10 +345,35 @@ function drawFullChart3() {
           // set up the updating of the chart each second
           var series = this.series[0];
           fullinterval3 = setInterval(function () {
-            var x = new Date().getTime(), // current time
+            var x = new Date().getTime(),
+              engagement = 0, // current time
               y = Math.random();
+
+            $.ajax({
+              url: "http://49.232.60.34:5000/get_class_information",
+              type: "GET",
+              async: false,
+              success: function (res) {
+                console.log("getting data from backend");
+                data = JSON.parse(res);
+                // var engagement = 0;
+                data.forEach((d) => {
+                  engagement += parseFloat(d.engagement);
+                });
+                engagement /= data.length;
+                console.log("ajax success engagement:", engagement);
+              },
+            }).done(function () {
+              console.log("ajax done");
+            });
+
+            // var eng = doAjax("http://49.232.60.34:5000/get_class_information");
+            // console.log("doajax:", eng);
+            console.log("engagement:", engagement);
+            console.log("y:", y);
+            y = engagement;
             series.addPoint([x, y], true, true);
-          }, 1000);
+          }, 5000);
         },
       },
     },

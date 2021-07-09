@@ -17,6 +17,10 @@ function ToDefaultView() {
   defaultWindow.moveTo(screen.width, 0);
 }
 
+function handleUnloadDashboard() {
+  console.log("unload dashboard...");
+}
+
 function ToFullView(rate) {
   console.log("to full view...");
 
