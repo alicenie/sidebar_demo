@@ -65,7 +65,7 @@ function handleWindowResize() {
   // $("#defaultchart1").css("height", 100);
   $("#defaultTrigger").css("width", width);
   $("#threshold").css("width", width - 50);
-
+  $("#emotion_container").css("width",width);
   // $("#fullchart1").css("width", width);
   // $("#fullchart2").css("width", width);
   // $("#fullchart3").css("width", width);
@@ -125,7 +125,6 @@ function loadWindow() {
       themeid = val.substring(themeName.length + 1);
   });
   $("input[name='themeradio'][value=" + themeid + "]").prop("checked", true);
-
   // initial store in cookies when first load
   if (!gazeChartType) {
     gazeChartType = $("input[name='gazeradio']:checked").val();
@@ -152,6 +151,8 @@ function loadWindow() {
     document.cookie = "themeid=" + themeid;
   }
 }
+
+var gazeChartType = "Radial";
 
 function handleRadioChange() {
   gazeChartType = $("input[name='gazeradio']:checked").val();
@@ -185,3 +186,33 @@ function handleThemeChange() {
   console.log("themeradio:", $("input[name='themeradio']:checked"));
   document.cookie = "themeid=" + themeid;
 }
+// function Handle_select_full_view_size() {
+//   var full_view_ratio = -1;
+//   // var myselect=window.document.getElementById("selection");
+//   //
+//   // var index=myselect.selectedIndex;
+//   // var win=window.open();
+//   // win.alert(index);
+//   // if(index) {
+//   //   full_view_ratio = myselect.options[index].value;
+//   // }
+//   var selection_list = [];
+
+//   var base = document.getElementById("full_size_selection");
+//   for (var i = 0; i < 3; i++) {
+//     if (base.children[i].firstElementChild.checked) {
+//       full_view_ratio = i;
+//       break;
+//     }
+//   }
+//   // var win=window.open();
+//   // win.alert(full_view_ratio);
+//   full_view_ratio = (full_view_ratio + 1) / 4;
+//   if (full_view_ratio > 0.6) {
+//     full_view_ratio = 1;
+//   }
+//   if (full_view_ratio == 0) {
+//     full_view_ratio = 0.25;
+//   }
+//   return full_view_ratio;
+// }

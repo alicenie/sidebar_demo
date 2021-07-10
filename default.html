@@ -8,7 +8,7 @@
     <title>Sidebar Demo</title>
     <script src="main.js"></script>
     <script src="default.js"></script>
-
+    <script src="handle_emotion.js"></script>
     <script src="jquery/jquery-3.5.1.min.js"></script>
     <!-- <script src="https://code.jquery.com/jquery-1.12.4.js"></script> -->
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
@@ -18,11 +18,6 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
         crossorigin="anonymous"></script>
-    <!-- <link href="bootstrap-5.0.2-dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <script src="bootstrap-5.0.2-dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
-        crossorigin="anonymous"></script> -->
 
     <script src="https://code.highcharts.com/highcharts.js"></script>
     <script src="https://code.highcharts.com/modules/exporting.js"></script>
@@ -31,13 +26,6 @@
     <script src="https://code.highcharts.com/highcharts-more.js"></script>
     <script src="https://code.highcharts.com/modules/solid-gauge.js"></script>
 
-    <!-- <script src="Highcharts-9.1.2/code/highcharts.js"></script>
-    <script src="Highcharts-9.1.2/code/modules/exporting.js"></script>
-    <script src="Highcharts-9.1.2/code/modules/export-data.js"></script>
-    <script src="Highcharts-9.1.2/code/modules/accessibility.js"></script>
-    <script src="Highcharts-9.1.2/code/highcharts-more.js"></script>
-    <script src="Highcharts-9.1.2/code/modules/solid-gauge.js"></script> -->
-
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="ztc_added.css">
     <script src="https://d3js.org/d3.v5.min.js"></script>
@@ -45,9 +33,9 @@
 
 <body onresize="handleWindowResize()" onload="loadDefaultWindow()">
     <div class="container-fluid">
-        <h5>Default View</h5>
+        <h6 style="text-align: center;">Default View</h6>
 
-        <div class="btn-group btn-group-sm">
+        <div class="btn-group btn-group-sm" >
             <!-- full size -->
             <div class="btn-group btn-group-sm" role="group">
                 <button id="fullsize" type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
@@ -92,7 +80,7 @@
                                     <input class="form-check-input" type="checkbox" id="defaultcheckt" checked
                                         onchange="handleDisplay('defaultcheckt','defaultTrigger')">
                                     <div>
-                                        <img src="icon_img/trigger.png" class="content_icon">
+                                        <img src="info_img/trigger.png" class="content_icon">
                                         <label class="form-check-label" for="defaultcheckt">trigger</label>
                                     </div>
 
@@ -108,7 +96,7 @@
                                     <input class="form-check-input" type="checkbox" id="defaultcheck3" checked
                                         onchange="handleDisplay('defaultcheck3','defaultchart3')">
                                     <div class="selection_text_and_icon">
-                                        <img src="icon_img/Engagement.png" class="content_icon">
+                                        <img src="info_img/engage.png" class="content_icon">
                                         <label class="form-check-label" for="defaultcheck3">engagement</label>
                                     </div>
                                 </div>
@@ -123,7 +111,7 @@
                                     <input class="form-check-input" type="checkbox" id="defaultcheck2" checked
                                         onchange="handleDisplay('defaultcheck2','defaultchart2')">
                                     <div class="selection_text_and_icon">
-                                        <img src="icon_img/Confused.png" class="content_icon">
+                                        <img src="info_img/confuse.png" class="content_icon">
                                         <label class="form-check-label" for="defaultcheck2">confused</label>
 
                                     </div>
@@ -139,7 +127,7 @@
                                     <input class="form-check-input" type="checkbox" id="defaultcheck1" checked
                                         onchange="handleDisplay('defaultcheck1','defaultchart1')">
                                     <div>
-                                        <img src="icon_img/Gaze.png" class="content_icon">
+                                        <img src="info_img/gaze.png" class="content_icon">
                                         <label class="form-check-label" for="defaultcheck1">gaze</label>
                                     </div>
 
@@ -154,8 +142,22 @@
                                     <input class="form-check-input" type="checkbox" id="defaultcheck4" checked
                                         onchange="handleDisplay('defaultcheck4','defaultchart4')">
                                     <div class="selection_text_and_icon">
-                                        <img src="icon_img/Emotion.png" class="content_icon">
+                                        <img src="info_img/emotion.png" class="content_icon">
                                         <label class="form-check-label" for="defaultcheck4">emotion</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li><a class="dropdown-item" id="emotionwheelCheck" onmouseover="handleHighlight('emotion_container')"
+                            onmouseleave="handleUndoHighlight('emotion_container')">
+                            <div class="dropdown-option">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="defaultcheck5" checked
+                                        onchange="handleDisplay('defaultcheck5','emotion_container')">
+                                    <div class="selection_text_and_icon">
+                                        <img src="info_img/emotion_wheel_icon.jpg" class="content_icon">
+                                        <label class="form-check-label" for="defaultcheck5">emotion wheel</label>
                                     </div>
                                 </div>
                             </div>
@@ -198,7 +200,7 @@
             <li>
                 <!-- default 3 concentration-->
                 <div class="card" id="defaultchart3"
-                    style="width: 18rem; height: 10rem; border-color: #90e0ef; border-width: 3px;margin:5px 0px 5px 0px; padding: 1px; cursor:pointer"
+                    style="width: 18rem; height: 10rem; border-color: #90e0ef; border-width: 3px;margin:5px 0px 5px 0px; padding: 2px; cursor:pointer"
                     onclick="handleDefaultChart3()">
                 </div>
             </li>
@@ -206,7 +208,7 @@
             <li>
                 <!-- default 2 confused-->
                 <div class="card" id="defaultchart2"
-                    style="width: 18rem; height: 10rem; margin:5px 0px 5px 0px; border-color: #00b4d8; border-width: 3px;padding: 1px; cursor:pointer"
+                    style="width: 18rem; height: 10rem; margin:5px 0px 5px 0px; border-color: #00b4d8; border-width: 3px;padding: 2px; cursor:pointer"
                     onclick="handleDefaultChart2()">
 
                 </div>
@@ -220,7 +222,7 @@
                     <label class="form-check-label" for="defaultcheck1">gaze</label>
                 </div> -->
                 <div class="card" id="defaultchart1"
-                    style="width: 18rem; height: 10rem; margin:5px 0px 5px 0px; border-color: #0077b6; border-width: 3px;padding: 1px; cursor:pointer"
+                    style="width: 18rem; height: 10rem; margin:5px 0px 5px 0px; border-color: #0077b6; border-width: 3px;padding: 2px; cursor:pointer"
                     onclick="handleDefaultChart1()">
                 </div>
             </li>
@@ -229,8 +231,35 @@
                 <!-- default 4 emotional-->
                 <!-- <div clas -->
                 <div class="card" id="defaultchart4"
-                    style="width: 18rem; height: 10rem; margin:5px 0px 5px 0px; border-color: #03045e; border-width: 3px;padding: 1px; cursor:pointer;"
+                    style="width: 18rem; height: 10rem; margin:5px 0px 5px 0px; border-color: #03045e; border-width: 3px;padding: 2px; cursor:pointer;"
                     onclick="handleDefaultChart4()">
+                </div>
+            </li>
+            <li>
+                <!-- emotion wheel -->
+                <div id="emotion_container" class="card"
+                    style="width: 18rem; height: 10rem; margin:5px 0px 5px 0px; border-color: black; border-width: 3px;padding: 2px; cursor:pointer;
+                    position: relative;"
+                >   
+                    
+                    <p id="data_test" style="font-size: xx-small;display: none"></p>
+                    <img src="emotionwheel_background/emotionwheel.png" style="display: none;" id="emotion_wheel_img">
+                    
+                    <div style="margin: auto;width: 90px;height: 90px;position: relative; top :-20px" >
+                        <span style="font-size: x-small; text-align: center;">Emotion Wheel</span>
+                        <canvas width="90px" height="90px"  id="emotion_wheel"
+                                style="background-image: url('emotionwheel_background/emotionwheel_background.png');background-size:90px 90px;
+                                background-repeat: no-repeat;margin: auto;
+                                display: flex;align-items: center;justify-content: center"
+                        >
+                            Your explorer doesn't support canvas, please upload your explorer.
+                        </canvas>
+
+
+
+                    </div>
+
+                    <p style="font-size: xx-small;display: none" id="check_input"></p>
                 </div>
             </li>
         </ul>

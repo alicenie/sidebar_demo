@@ -3,7 +3,49 @@ function handleThresholdChange() {
   const threshold = $("#threshold")[0].value;
   $("#thresholdtext").html("> " + threshold);
 }
-
+function choose_data(name) {
+  var list=[];
+  if(name==="Emotion"){
+    for(var i=0;i<emotion_x.length;i++){
+      if(emotion_x[i]>0){
+        list.push(1);
+      }
+      else{
+        list.push(0);
+      }
+    }
+    return count(list);
+  }
+  else if(name==="Concentration"){
+    return count(engagements);
+  }
+  else if(name==="Confused"){
+    return count(confusions);
+  }
+  else if(name==="Gaze"){
+    return count(gazes);
+  }
+}
+function count(data) {
+  var num=0;
+  for(var i=0;i<data.length;i++){
+    if(data[i]>0.5){num=num+1;}
+    
+  }
+  return num;
+}
+function get_max(l1,l2) {
+  var data_0=l1[0],name_0=l1[1],data_1=l2[0],name_1=l2[1];
+  var rl=[];
+  if(data_0>data_1){
+    rl[0]=data_0;rl[1]=name_0;
+   
+  }
+  else{
+   rl[0]=data_1;rl[1]=name_1;
+  }
+  return rl;
+}
 function handleHidden() {
   console.log($("#chart_type").is(":visible"));
   if ($("#chart_type").is(":visible")) $("#hidden_space").hide();
@@ -25,57 +67,115 @@ var radialInterval1,
   default1 = 0,
   default2 = 0,
   default3 = 0,
-  default4 = 0;
+  default4 = 0,
+  student_datas=[],
+  engagements=[],
+  emotion_x=[],
+  emotion_y=[],
+  confusions=[],
+  headshakes=[],
+  headnodes=[],
+  gazes=[],
+  drowsinesses=[],
+  smiles=[],
+  speakings=[],
+  number_of_students=0,
+  if_get_data=false;
 
 const themes = {
-  theme_orange: {
-    default: {
-      defaultTrigger: "254,240,217",
-      defaultchart1: "227,74,51",
-      defaultchart2: "252,141,89",
-      defaultchart3: "253,204,138",
-      defaultchart4: "179,0,0",
-    },
+  theme_purple: {
+    defaultTrigger: "247, 209, 205",
+    defaultchart1: "179, 146, 172",
+    defaultchart2: "209, 179, 196",
+    defaultchart3: "232, 194, 202",
+    defaultchart4: "115, 93, 120",
+    // bar: "#f38375",
+    // radial: "#f7a399",
     motor: [
-      [0.1, "#fee8c8"],
-      [0.5, "#fdbb84"],
-      [0.9, "#e34a33"],
+      [0.1, "#e0b1cb"],
+      [0.5, "#9f86c0"],
+      [0.9, "#231942"],
     ],
   },
   theme_blue: {
-    default: {
-      defaultTrigger: "239,243,255",
-      defaultchart1: "49,130,189",
-      defaultchart2: "107,174,214",
-      defaultchart3: "189,215,231",
-      defaultchart4: "8,81,156",
-    },
+    defaultTrigger: "173, 232, 244",
+    defaultchart1: "56, 111, 164",
+    defaultchart2: "89, 165, 216",
+    defaultchart3: "144, 224, 239",
+    defaultchart4: "19, 60, 85",
+    // bar: "#f38375",
+    // radial: "#f7a399",
     motor: [
-      [0.1, "#deebf7"],
-      [0.5, "#9ecae1"],
-      [0.9, "#3182bd"],
+      [0.1, "#caf0f8"],
+      [0.5, "#59A5D8"],
+      [0.9, "#133C55"],
     ],
   },
-  theme_green: {
-    default: {
-      defaultTrigger: "237,248,233",
-      defaultchart1: "49,163,84",
-      defaultchart2: "116,196,118",
-      defaultchart3: "186,228,179",
-      defaultchart4: "0,109,44",
-    },
-
+  theme_orange: {
+    defaultTrigger: "247, 178, 103",
+    defaultchart1: "242, 112, 89",
+    defaultchart2: "244, 132, 95",
+    defaultchart3: "247, 157, 101",
+    defaultchart4: "242, 92, 84",
+    // bar: "#f38375",
+    // radial: "#f7a399",
     motor: [
-      [0.1, "#e5f5e0"],
-      [0.5, "#a1d99b"],
-      [0.9, "#31a354"],
+      [0.1, "#f7b267"],
+      [0.5, "#f4845f"],
+      [0.9, "#a4243b"],
     ],
   },
 };
-
+function get_data() {
+  $.get("http://49.232.60.34:5000/get_class_information",function(data,status){
+    if(status=="success"){
+      
+      if_get_data=true;
+        emotion_x=[];emotion_y=[];
+      student_datas=eval(data);
+      for(var student_number=0;student_number<student_datas.length;student_number++){           
+        
+        var emotion=student_datas[student_number].emotion;
+        var meet_space=false;
+        var local_emotion_x="",local_emotion_y="";
+        for(var emotion_string_index=0;emotion_string_index<emotion.length;emotion_string_index++){
+            if(emotion[emotion_string_index]===" "){
+                meet_space=true;
+                continue;
+            }
+            if(meet_space){
+                local_emotion_y+=emotion[emotion_string_index];
+            }
+            else{
+                local_emotion_x+=emotion[emotion_string_index];
+            }
+        }
+        engagements[student_number] = student_datas[student_number].engagement-0;//convert to number
+        emotion_x[student_number]=local_emotion_x-0;
+        emotion_y[student_number]=local_emotion_y-0;            
+        confusions[student_number] = student_datas[student_number].confusion-0;
+        headshakes[student_number] = student_datas[student_number].headshake-0;
+        headnodes[student_number] = student_datas[student_number].headnod-0;
+        gazes[student_number] = student_datas[student_number].gaze-0;
+        drowsinesses[student_number] = student_datas[student_number].drowsiness-0;
+        smiles[student_number] = student_datas[student_number].smile-0;
+        speakings[student_number] = student_datas[student_number].speaking-0;  
+                 
+      }
+      number_of_students= student_datas.length-0;
+      //alert(""+count(engagements)+"    "+count(confusions)+"     "+ count(gazes))
+    }
+    else{
+      alert("Data is not successfully got from server with status: "+status);
+    }
+  });
+  
+}
 function loadDefaultWindow() {
   // get the chart type
+  console.log(document.cookie);
   var cookieList = document.cookie.split("; ");
+
   console.log("cookie list:", cookieList);
 
   var gazeChartType,
@@ -121,7 +221,7 @@ function loadDefaultWindow() {
   console.log("theme:", theme);
 
   // set theme
-  for (const [key, value] of Object.entries(theme.default)) {
+  for (const [key, value] of Object.entries(theme)) {
     console.log(`${key}: ${value}`);
     $(`#${key}`).css("border-color", `rgb(${value})`);
     $(`#${key}Check`).css("background-color", `rgba(${value},0.5)`);
@@ -144,78 +244,107 @@ function loadDefaultWindow() {
   $("#defaultchart1").css("width", width);
   // $("#defaultchart1").css("height", width + 50 - 100);
   $("#defaultTrigger").css("width", width);
+
   // $("#defaultTrigger").css("height", width + 50);
   //   console.log(width);
 
-  // draw default 1 gaze
-  if (barInterval1) clearInterval(barInterval1);
-  if (radialInterval1) clearInterval(radialInterval1);
-  if (motorInterval1) clearInterval(motorInterval1);
+  //Get data from server
+  
+  
+  setInterval(get_data,1000);
+    
 
-  if (gazeChartType == "Motor") {
-    drawMotorChart("defaultchart1", "Gaze", theme);
-    $("#defaultchart1").css("height", 120);
-  } else if (gazeChartType == "Radial") {
-    drawRadialChart("defaultchart1", "Gaze", theme);
-    $("#defaultchart1").css("height", 140);
-  } else {
-    drawBarChart("defaultchart1", "Gaze", theme);
-    $("#defaultchart1").css("height", 90);
-  }
+  // while(!if_get_data){
+  //   var list = document.getElementsByClassName("card");
+  //   for(var i=0;i<list.length;i++){
+  //     list[i].innerHTML="waiting";
+  //   }
+  // }
 
-  // draw default 2 confused
-  if (barInterval2) clearInterval(barInterval2);
-  if (radialInterval2) clearInterval(radialInterval2);
-  if (motorInterval2) clearInterval(motorInterval2);
+    // draw default 1 gaze
+    if (barInterval1) clearInterval(barInterval1);
+    if (radialInterval1) clearInterval(radialInterval1);
+    if (motorInterval1) clearInterval(motorInterval1);
 
-  if (confusedChartType == "Motor") {
-    drawMotorChart("defaultchart2", "Confused", theme);
-    $("#defaultchart2").css("height", 120);
-  } else if (confusedChartType == "Radial") {
-    drawRadialChart("defaultchart2", "Confused", theme);
-    $("#defaultchart2").css("height", 140);
-  } else {
-    drawBarChart("defaultchart2", "Confused", theme);
-    $("#defaultchart2").css("height", 90);
-  }
+    if (gazeChartType == "Motor") {
+      drawMotorChart("defaultchart1", "Gaze", theme);
+      $("#defaultchart1").css("height", 120);
+    } else if (gazeChartType == "Radial") {
+      drawRadialChart("defaultchart1", "Gaze", theme);
+      
+      $("#defaultchart1").css("height", 140);
+    } else {
+      drawBarChart("defaultchart1", "Gaze", theme);
+      $("#defaultchart1").css("height", 90);
+    }
 
-  // draw default 3 Engagement
-  if (barInterval3) clearInterval(barInterval3);
-  if (radialInterval3) clearInterval(radialInterval3);
-  if (motorInterval3) clearInterval(motorInterval3);
+    // draw default 2 confused
+    if (barInterval2) clearInterval(barInterval2);
+    if (radialInterval2) clearInterval(radialInterval2);
+    if (motorInterval2) clearInterval(motorInterval2);
 
-  if (concenChartType == "Motor") {
-    drawMotorChart("defaultchart3", "Engagement", theme);
-    $("#defaultchart3").css("height", 120);
-  } else if (concenChartType == "Radial") {
-    drawRadialChart("defaultchart3", "Engagement", theme);
-    $("#defaultchart3").css("height", 140);
-  } else {
-    drawBarChart("defaultchart3", "Engagement", theme);
-    $("#defaultchart3").css("height", 90);
-  }
+    if (confusedChartType == "Motor") {
+      drawMotorChart("defaultchart2", "Confused", theme);
+      $("#defaultchart2").css("height", 120);
+    } else if (confusedChartType == "Radial") {
+      drawRadialChart("defaultchart2", "Confused", theme);
+      $("#defaultchart2").css("height", 140);
+    } else {
+      drawBarChart("defaultchart2", "Confused", theme);
+      $("#defaultchart2").css("height", 90);
+    }
 
-  // draw default 4 emotion
-  if (barInterval4) clearInterval(barInterval4);
-  if (radialInterval4) clearInterval(radialInterval4);
-  if (motorInterval4) clearInterval(motorInterval4);
+    // draw default 3 concentration
+    if (barInterval3) clearInterval(barInterval3);
+    if (radialInterval3) clearInterval(radialInterval3);
+    if (motorInterval3) clearInterval(motorInterval3);
 
-  if (emoChartType == "Motor") {
-    drawMotorChart("defaultchart4", "Emotion", theme);
-    $("#defaultchart4").css("height", 120);
-  } else if (emoChartType == "Radial") {
-    drawRadialChart("defaultchart4", "Emotion", theme);
-    $("#defaultchart4").css("height", 140);
-  } else {
-    drawBarChart("defaultchart4", "Emotion", theme);
-    $("#defaultchart4").css("height", 90);
-  }
+    if (concenChartType == "Motor") {
+      drawMotorChart("defaultchart3", "Concentration", theme);
+      $("#defaultchart3").css("height", 120);
+    } else if (concenChartType == "Radial") {
+      drawRadialChart("defaultchart3", "Concentration", theme);
+      $("#defaultchart3").css("height", 140);
+    } else {
+      drawBarChart("defaultchart3", "Concentration", theme);
+      $("#defaultchart3").css("height", 90);
+    }
 
+    // draw default 4 emotion
+
+    if (barInterval4) clearInterval(barInterval4);
+    if (radialInterval4) clearInterval(radialInterval4);
+    if (motorInterval4) clearInterval(motorInterval4);
+
+    if (emoChartType == "Motor") {
+      drawMotorChart("defaultchart4", "Emotion", theme);
+      $("#defaultchart4").css("height", 120);
+    } else if (emoChartType == "Radial") {
+      drawRadialChart("defaultchart4", "Emotion", theme);
+      $("#defaultchart4").css("height", 140);
+    } else {
+      drawBarChart("defaultchart4", "Emotion", theme);
+      $("#defaultchart4").css("height", 90);
+    }
+  
+  //emotion wheel
+  setInterval(create_emotion_wheel,2000);
   // trigger
+  // var trigger_values=[count(confusions),count(headshakes),count];
+
   setInterval(function () {
-    const value = Math.round(Math.random() * 100);
+    var max_data=0,max_name=0;
+    var max_emoji=[max_data,max_name];
+    
+
+    
+    max_emoji=get_max([count(confusions),0],[count(smiles),1]);
+    max_emoji=get_max(max_emoji,[count(headnodes),2]);
+    max_emoji=get_max(max_emoji,[count(headshakes),3]);
+    max_emoji=get_max(max_emoji,[count(drowsinesses),4]);
+    max_emoji=get_max(max_emoji,[count(speakings),5]);
     const threshold = $("#threshold")[0].value;
-    if (value > threshold) {
+    if (max_emoji[0] > threshold) {
       // $("#trigger-img").show();
       // $("#trigger-text").show();
 
@@ -228,10 +357,9 @@ function loadDefaultWindow() {
         "./emoji/nod.gif",
         "./emoji/shake.gif",
         "./emoji/sleep.gif",
-        "./emoji/smile.gif",
         "./emoji/speak.gif",
       ];
-      const i = Math.floor(Math.random() * imglist.length);
+      const i = max_emoji[1];
       //   console.log(imglist[i]);
 
       // $("#trigger-img").attr("src", imglist[i]);
@@ -264,7 +392,7 @@ function loadDefaultWindow() {
         .attr("y", 15)
         .attr("fill", "white")
         .attr("font-size", 15)
-        .text(value)
+        .text(max_emoji[0])
         .attr("text-anchor", "middle");
     } else {
       // change the height of the card
@@ -282,9 +410,8 @@ function loadDefaultWindow() {
 }
 
 function drawRadialChart(container, name, theme) {
-  var image;
   var RadialChart = Highcharts.chart(container, {
-    colors: [`rgb(${theme.default[container]})`],
+    colors: [`rgb(${theme[container]})`],
     credits: false,
     chart: {
       type: "column",
@@ -297,28 +424,16 @@ function drawRadialChart(container, name, theme) {
       // borderWidth: 2,
       // plotBackgroundImage: "info_img/engage.png",
 
-      events: {
-        // load: function () {
-        //   var series = this.series[0];
-        //   setInterval(function () {
-        //     data = [];
-        //     data.push(Math.random() * 150);
-        //     series.setData(data);
-        //   }, 2000);
-        // },
-        redraw: function () {
-          // console.log("redraw", this.chartHeight);
-          if (image) image.destroy();
-          image = this.renderer.image(
-            `icon_img/${name}.png`,
-            this.chartWidth / 2 - 10,
-            this.chartHeight / 2 - 18,
-            22,
-            22
-          );
-          image.add();
-        },
-      },
+      // events: {
+      //   load: function () {
+      //     var series = this.series[0];
+      //     setInterval(function () {
+      //       data = [];
+      //       data.push(Math.random() * 150);
+      //       series.setData(data);
+      //     }, 2000);
+      //   },
+      // },
     },
     exporting: {
       enabled: false,
@@ -375,10 +490,6 @@ function drawRadialChart(container, name, theme) {
       labelFormatter: function () {
         return Math.round((this.yData / 150) * 100) + "%";
       },
-      // hide the dot
-      symbolHeight: 0.001,
-      symbolWidth: 0.001,
-      symbolRadius: 0.001,
     },
     series: [
       {
@@ -387,51 +498,34 @@ function drawRadialChart(container, name, theme) {
       },
     ],
   });
+  var wid=container.width;
+  var height=container.height;
+  var icon= RadialChart.renderer.image("info_img/confuse.png", 36, 53, 22, 22);
+  icon.add();
 
-  image = RadialChart.renderer
-    .image(
-      `icon_img/${name}.png`,
-      RadialChart.chartWidth / 2 - 10,
-      RadialChart.chartHeight / 2 - 18,
-      22,
-      22
-    )
-    .add();
 
   var radialInterval = setInterval(function () {
+    
     if (RadialChart) {
       data = [];
-      data.push(Math.random() * 150);
-      RadialChart.series[0].setData(data);
+      data.push(Math.round(choose_data(name)*100/number_of_students));
+      //alert(choose_data(name)+"        "+Math.round(choose_data(name)*100/number_of_students));
+      
+      RadialChart.series[0].setData(data);}
       // console.log("radial chart set data");
-    }
+    
   }, 2000);
 
   return radialInterval;
 }
 
 function drawMotorChart(container, name, theme) {
-  var image;
-  // console.log(theme);
+  console.log(theme);
   var gaugeOptions = {
     chart: {
       type: "solidgauge",
       margin: [30, 0, 0, 0],
       height: 118,
-      events: {
-        redraw: function () {
-          // console.log("redraw", this.chartWidth);
-          if (image) image.destroy();
-          image = this.renderer.image(
-            `icon_img/${name}.png`,
-            this.chartWidth / 2 - 10,
-            this.chartHeight / 2 - 6,
-            22,
-            22
-          );
-          image.add();
-        },
-      },
     },
 
     title: {
@@ -531,22 +625,12 @@ function drawMotorChart(container, name, theme) {
     })
   );
 
-  image = MotorChart.renderer
-    .image(
-      `icon_img/${name}.png`,
-      MotorChart.chartWidth / 2 - 10,
-      MotorChart.chartHeight / 2 - 6,
-      22,
-      22
-    )
-    .add();
-
   var motorInterval = setInterval(function () {
     var point, newVal, inc;
-
+    
     if (MotorChart) {
       point = MotorChart.series[0].points[0];
-      inc = Math.round((Math.random() - 0.5) * 100);
+      inc = Math.round((choose_data(name)/number_of_students-0.5)*100);
       newVal = point.y + inc;
 
       if (newVal < 0 || newVal > 200) {
@@ -560,28 +644,13 @@ function drawMotorChart(container, name, theme) {
   return motorInterval;
 }
 
-function drawBarChart(container, name, theme, barInterval) {
-  var image;
+function drawBarChart(container, name, theme,input_value, barInterval) {
   var BarChart = Highcharts.chart(container, {
-    colors: [`rgb(${theme.default[container]})`],
+    colors: [`rgb(${theme[container]})`],
     chart: {
       type: "bar",
       margin: [20, 0, 40, 0],
       height: 100,
-      events: {
-        redraw: function () {
-          // console.log("redraw", this.chartHeight);
-          if (image) image.destroy();
-          image = this.renderer.image(
-            `icon_img/${name}.png`,
-            this.chartWidth / 2 - 35,
-            this.chartHeight / 2 + 10,
-            22,
-            22
-          );
-          image.add();
-        },
-      },
     },
     exporting: {
       enabled: false,
@@ -622,10 +691,6 @@ function drawBarChart(container, name, theme, barInterval) {
       labelFormatter: function () {
         return Math.round((this.yData / 150) * 100) + "%";
       },
-      // hide the dot
-      symbolHeight: 0.001,
-      symbolWidth: 0.001,
-      symbolRadius: 0.001,
     },
     series: [
       {
@@ -635,20 +700,10 @@ function drawBarChart(container, name, theme, barInterval) {
     ],
   });
 
-  image = BarChart.renderer
-    .image(
-      `icon_img/${name}.png`,
-      BarChart.chartWidth / 2 - 35,
-      BarChart.chartHeight / 2 + 10,
-      22,
-      22
-    )
-    .add();
-
   var barInterval = setInterval(function () {
     if (BarChart) {
       data = [];
-      data.push(Math.random() * 150);
+      data.push(Math.round(choose_data(name)*100/number_of_students));
       BarChart.series[0].setData(data);
       // console.log("bar chart set data");
     }
@@ -738,15 +793,15 @@ function handleDefaultChart3() {
   if (motorInterval3) clearInterval(motorInterval3);
 
   if (default3 == 0) {
-    drawMotorChart("defaultchart3", "Engagement", theme);
+    drawMotorChart("defaultchart3", "concentration", theme);
     document.cookie = "concencharttype=Motor";
     $("#defaultchart3").css("height", 120);
   } else if (default3 == 1) {
-    drawRadialChart("defaultchart3", "Engagement", theme);
+    drawRadialChart("defaultchart3", "concentration", theme);
     document.cookie = "concencharttype=Radial";
     $("#defaultchart3").css("height", 140);
   } else {
-    drawBarChart("defaultchart3", "Engagement", theme);
+    drawBarChart("defaultchart3", "concentration", theme);
     document.cookie = "concencharttype=Bar";
     $("#defaultchart3").css("height", 90);
   }
@@ -768,6 +823,15 @@ function handleDefaultChart4() {
   if (barInterval4) clearInterval(barInterval4);
   if (radialInterval4) clearInterval(radialInterval4);
   if (motorInterval4) clearInterval(motorInterval4);
+  // var local_emotion=[];
+  // for(var emotion_index=0;emotion_index<emotion_x.length;emotion_index++){
+  //   if(emotion_x[emotion_index]>0.1){
+  //     local_emotion.push(1);
+  //   }
+  //   else{
+  //     local_emotion.push(0);
+  //   }
+  // }
 
   if (default4 == 0) {
     drawMotorChart("defaultchart4", "Emotion", theme);
@@ -791,6 +855,7 @@ const containers = [
   "defaultchart3",
   "defaultchart4",
   "defaultTrigger",
+  "emotion_container",
 ];
 
 function handleHighlight(container) {
