@@ -1,7 +1,7 @@
 function handleThresholdChange() {
   //   console.log($("#threshold")[0].value);
   const threshold = $("#threshold")[0].value;
-  $("#thresholdtext").html("> " + threshold + "%");
+  $("#thresholdtext").html("> " + threshold);
 }
 
 function handleHidden() {
@@ -261,10 +261,9 @@ function loadDefaultWindow() {
       },
     });
 
-    // const value = Math.round(Math.random() * 100);
-    const ratio = max_value / total_ppl;
+    $("#threshold").attr("max", total_ppl);
     const threshold = $("#threshold")[0].value;
-    if (ratio * 100 > threshold) {
+    if (max_value > threshold) {
       // $("#trigger-img").show();
       // $("#trigger-text").show();
 
