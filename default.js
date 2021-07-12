@@ -27,6 +27,13 @@ var radialInterval1,
   default3 = 0,
   default4 = 0;
 
+const correspond_name = {
+  Confused: "confusion",
+  Engagement: "engagement",
+  Gaze: "gaze",
+  Emotion: "emotion",
+};
+
 const themes = {
   theme_orange: {
     default: {
@@ -401,7 +408,37 @@ function drawRadialChart(container, name, theme) {
   var radialInterval = setInterval(function () {
     if (RadialChart) {
       data = [];
-      data.push(Math.random() * 150);
+      norm_data = 0;
+      // get data from backend
+      $.ajax({
+        url: "http://49.232.60.34:5000/get_class_information",
+        type: "GET",
+        async: false,
+        success: function (res) {
+          // console.log("getting data from backend");
+          var live_data = JSON.parse(res);
+          // console.log(live_data);
+          // console.log(correspond_name[name]);
+          if (correspond_name[name] == "emotion") {
+            live_data.forEach((d) => {
+              // console.log(d[correspond_name[name]].split(" "));
+              return (norm_data += parseFloat(
+                d[correspond_name[name]].split(" ")[0]
+              ));
+            });
+            norm_data /= live_data.length;
+            norm_data = (norm_data + 1) / 2;
+          } else {
+            live_data.forEach(
+              (d) => (norm_data += parseFloat(d[correspond_name[name]]))
+            );
+            norm_data /= live_data.length;
+          }
+          // console.log("normalized data:", norm_data);
+        },
+      });
+
+      data.push(norm_data * 150);
       RadialChart.series[0].setData(data);
       // console.log("radial chart set data");
     }
@@ -546,9 +583,39 @@ function drawMotorChart(container, name, theme) {
 
     if (MotorChart) {
       point = MotorChart.series[0].points[0];
-      console.log(MotorChart.series[0].points);
-      console.log(point.y);
-      inc = Math.round((Math.random() - 0.5) * 100);
+
+      norm_data = 0;
+      // get data from backend
+      $.ajax({
+        url: "http://49.232.60.34:5000/get_class_information",
+        type: "GET",
+        async: false,
+        success: function (res) {
+          // console.log("getting data from backend");
+          var live_data = JSON.parse(res);
+          // console.log(live_data);
+          // var norm_data = 0;
+          // console.log(correspond_name[name]);
+          if (correspond_name[name] == "emotion") {
+            live_data.forEach((d) => {
+              // console.log(d[correspond_name[name]].split(" "));
+              return (norm_data += parseFloat(
+                d[correspond_name[name]].split(" ")[0]
+              ));
+            });
+            norm_data /= live_data.length;
+            norm_data = (norm_data + 1) / 2;
+          } else {
+            live_data.forEach(
+              (d) => (norm_data += parseFloat(d[correspond_name[name]]))
+            );
+            norm_data /= live_data.length;
+          }
+          // console.log("normalized data:", norm_data);
+        },
+      });
+
+      inc = Math.round((norm_data - 0.5) * 100);
       newVal = point.y + inc;
 
       if (newVal < 0 || newVal > 200) {
@@ -650,7 +717,38 @@ function drawBarChart(container, name, theme, barInterval) {
   var barInterval = setInterval(function () {
     if (BarChart) {
       data = [];
-      data.push(Math.random() * 150);
+      norm_data = 0;
+      // get data from backend
+      $.ajax({
+        url: "http://49.232.60.34:5000/get_class_information",
+        type: "GET",
+        async: false,
+        success: function (res) {
+          // console.log("getting data from backend");
+          var live_data = JSON.parse(res);
+          // console.log(live_data);
+          // var norm_data = 0;
+          // console.log(correspond_name[name]);
+          if (correspond_name[name] == "emotion") {
+            live_data.forEach((d) => {
+              // console.log(d[correspond_name[name]].split(" "));
+              return (norm_data += parseFloat(
+                d[correspond_name[name]].split(" ")[0]
+              ));
+            });
+            norm_data /= live_data.length;
+            norm_data = (norm_data + 1) / 2;
+          } else {
+            live_data.forEach((d) => {
+              // console.log(parseFloat(d[correspond_name[name]]));
+              return (norm_data += parseFloat(d[correspond_name[name]]));
+            });
+            norm_data /= live_data.length;
+          }
+          // console.log("normalized data:", norm_data);
+        },
+      });
+      data.push(norm_data * 150);
       BarChart.series[0].setData(data);
       // console.log("bar chart set data");
     }
