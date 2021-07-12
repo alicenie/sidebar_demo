@@ -220,6 +220,35 @@ function loadDefaultWindow() {
 
   // trigger
   setInterval(function () {
+    // get data from backend
+    $.ajax({
+      url: "http://49.232.60.34:5000/get_class_information",
+      type: "GET",
+      async: false,
+      success: function (res) {
+        // console.log("getting data from backend");
+        var live_data = JSON.parse(res);
+        console.log(live_data);
+        // console.log(correspond_name[name]);
+        // if (correspond_name[name] == "emotion") {
+        //   live_data.forEach((d) => {
+        //     // console.log(d[correspond_name[name]].split(" "));
+        //     return (norm_data += parseFloat(
+        //       d[correspond_name[name]].split(" ")[0]
+        //     ));
+        //   });
+        //   norm_data /= live_data.length;
+        //   norm_data = (norm_data + 1) / 2;
+        // } else {
+        //   live_data.forEach(
+        //     (d) => (norm_data += parseFloat(d[correspond_name[name]]))
+        //   );
+        //   norm_data /= live_data.length;
+        // }
+        // console.log("normalized data:", norm_data);
+      },
+    });
+
     const value = Math.round(Math.random() * 100);
     const threshold = $("#threshold")[0].value;
     if (value > threshold) {
