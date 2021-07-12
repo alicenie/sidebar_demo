@@ -1,24 +1,23 @@
 var fullinterval1, fullinterval2, fullinterval3, updateFullInterval;
 
-async function doAjax(ajaxurl) {
-  var engagement;
-  await $.ajax({
-    url: ajaxurl,
-    type: "GET",
-    success: function (res) {
-      console.log("getting data from backend");
-      data = JSON.parse(res);
-      // var engagement = 0;
-      data.forEach((d) => {
-        engagement += parseFloat(d.engagement);
-      });
-      engagement /= data.length;
-      console.log("ajax success engagement:", engagement);
-    },
-  });
-
-  return engagement;
-}
+// async function doAjax(ajaxurl) {
+//   var engagement;
+//   await $.ajax({
+//     url: ajaxurl,
+//     type: "GET",
+//     success: function (res) {
+//       console.log("getting data from backend");
+//       data = JSON.parse(res);
+//       // var engagement = 0;
+//       data.forEach((d) => {
+//         engagement += parseFloat(d.engagement);
+//       });
+//       engagement /= data.length;
+//       console.log("ajax success engagement:", engagement);
+//     },
+//   });
+//   return engagement;
+// }
 
 function loadFullWindow() {
   // updateFullInterval = setInterval(function () {
@@ -92,9 +91,9 @@ function loadFullWindow() {
 
   drawFullChart2();
 
-  drawFullChart3();
+  // drawFullChart3();
 
-  drawLineChart("fullchart4");
+  drawLineChart("fullchart3");
 }
 
 function handleUnloadFull() {
@@ -513,11 +512,11 @@ function drawLineChart(container) {
     },
 
     title: {
-      text: "Highcharts drawing " + n + " points",
+      text: "Engagement",
     },
 
     subtitle: {
-      text: "Using the Boost module",
+      text: "Historical data (updata per second)",
     },
 
     tooltip: {
