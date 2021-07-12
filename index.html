@@ -76,102 +76,110 @@
         <br />
         <br />
 
-        <h5>Customize:</h5>
+        <div class="m-2 p-2 card" style="border-color: #e2eafc; border-width: 4px; border-radius: 1rem; width:1000px">
+            <h5>Customize:</h5>
 
-        <!-- chart img -->
-        <div class="row">
-            <div class="col-2">
+            <!-- chart img -->
+            <div class="row">
+                <div class="col-2">
+                </div>
+                <div class="col-2" style="text-align: center">
+                    <img width=100 src="chart_img/radial.png" />
+                </div>
+                <div class="col-2" style="text-align: center">
+                    <img width=100 class="m-2" src="chart_img/motor.png" />
+                </div>
+                <div class="col-2" style="text-align: center">
+                    <img width=100 class="m-2" src="chart_img/bar.png" />
+                </div>
             </div>
-            <div class="col-2" style="text-align: center">
-                <img width=100 src="chart_img/radial.png" />
+
+            <div class='row m-2'>
+                <div class="col-2">
+                    <p style="font-size: large;">Concentration:</p>
+                </div>
+                <div class="btn-group col-6" role="group" aria-label="Basic radio toggle button group"
+                    onchange="handleRadioChange()">
+                    <input type="radio" class="btn-check" name="concenradio" id="concenradio1" value="Radial"
+                        autocomplete="off" checked>
+                    <label class="btn btn-outline-primary" for="concenradio1">Radial</label>
+
+                    <input type="radio" class="btn-check" name="concenradio" id="concenradio2" value="Motor"
+                        autocomplete="off">
+                    <label class="btn btn-outline-primary" for="concenradio2">Motor</label>
+
+                    <input type="radio" class="btn-check" name="concenradio" id="concenradio3" value="Bar"
+                        autocomplete="off">
+                    <label class="btn btn-outline-primary" for="concenradio3">Bar</label>
+                </div>
             </div>
-            <div class="col-2" style="text-align: center">
-                <img width=100 class="m-2" src="chart_img/motor.png" />
+
+            <div class='row m-2'>
+                <div class="col-2">
+                    <p style="font-size: large;">Confused:</p>
+                </div>
+                <div class="btn-group col-6" role="group" aria-label="Basic radio toggle button group"
+                    onchange="handleRadioChange()">
+                    <input type="radio" class="btn-check" name="confusedradio" id="confusedradio1" value="Radial"
+                        autocomplete="off" checked>
+                    <label class="btn btn-outline-primary" for="confusedradio1">Radial</label>
+
+                    <input type="radio" class="btn-check" name="confusedradio" id="confusedradio2" value="Motor"
+                        autocomplete="off">
+                    <label class="btn btn-outline-primary" for="confusedradio2">Motor</label>
+
+                    <input type="radio" class="btn-check" name="confusedradio" id="confusedradio3" value="Bar"
+                        autocomplete="off">
+                    <label class="btn btn-outline-primary" for="confusedradio3">Bar</label>
+                </div>
             </div>
-            <div class="col-2" style="text-align: center">
-                <img width=100 class="m-2" src="chart_img/bar.png" />
+
+            <div class='row m-2'>
+                <div class="col-2">
+                    <p style="font-size: large;">Gaze:</p>
+                </div>
+                <div class="btn-group col-6" role="group" aria-label="Basic radio toggle button group"
+                    onchange="handleRadioChange()">
+                    <input type="radio" class="btn-check" name="gazeradio" id="gazeradio1" value="Radial"
+                        autocomplete="off" checked>
+                    <label class="btn btn-outline-primary" for="gazeradio1">Radial</label>
+
+                    <input type="radio" class="btn-check" name="gazeradio" id="gazeradio2" value="Motor"
+                        autocomplete="off">
+                    <label class="btn btn-outline-primary" for="gazeradio2">Motor</label>
+
+                    <input type="radio" class="btn-check" name="gazeradio" id="gazeradio3" value="Bar"
+                        autocomplete="off">
+                    <label class="btn btn-outline-primary" for="gazeradio3">Bar</label>
+                </div>
+            </div>
+
+            <div class='row m-2'>
+                <div class="col-2">
+                    <p style="font-size: large;">Emotion:</p>
+                </div>
+                <div class="btn-group col-6" role="group" aria-label="Basic radio toggle button group"
+                    onchange="handleRadioChange()">
+                    <input type="radio" class="btn-check" name="emoradio" id="emoradio1" value="Radial"
+                        autocomplete="off" checked>
+                    <label class="btn btn-outline-primary" for="emoradio1">Radial</label>
+
+                    <input type="radio" class="btn-check" name="emoradio" id="emoradio2" value="Motor"
+                        autocomplete="off">
+                    <label class="btn btn-outline-primary" for="emoradio2">Motor</label>
+
+                    <input type="radio" class="btn-check" name="emoradio" id="emoradio3" value="Bar" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="emoradio3">Bar</label>
+                </div>
             </div>
         </div>
 
-        <div class='row m-2'>
-            <div class="col-2">
-                <p style="font-size: large;">Concentration:</p>
-            </div>
-            <div class="btn-group col-6" role="group" aria-label="Basic radio toggle button group"
-                onchange="handleRadioChange()">
-                <input type="radio" class="btn-check" name="concenradio" id="concenradio1" value="Radial"
-                    autocomplete="off" checked>
-                <label class="btn btn-outline-primary" for="concenradio1">Radial</label>
-
-                <input type="radio" class="btn-check" name="concenradio" id="concenradio2" value="Motor"
-                    autocomplete="off">
-                <label class="btn btn-outline-primary" for="concenradio2">Motor</label>
-
-                <input type="radio" class="btn-check" name="concenradio" id="concenradio3" value="Bar"
-                    autocomplete="off">
-                <label class="btn btn-outline-primary" for="concenradio3">Bar</label>
-            </div>
-        </div>
-
-        <div class='row m-2'>
-            <div class="col-2">
-                <p style="font-size: large;">Confused:</p>
-            </div>
-            <div class="btn-group col-6" role="group" aria-label="Basic radio toggle button group"
-                onchange="handleRadioChange()">
-                <input type="radio" class="btn-check" name="confusedradio" id="confusedradio1" value="Radial"
-                    autocomplete="off" checked>
-                <label class="btn btn-outline-primary" for="confusedradio1">Radial</label>
-
-                <input type="radio" class="btn-check" name="confusedradio" id="confusedradio2" value="Motor"
-                    autocomplete="off">
-                <label class="btn btn-outline-primary" for="confusedradio2">Motor</label>
-
-                <input type="radio" class="btn-check" name="confusedradio" id="confusedradio3" value="Bar"
-                    autocomplete="off">
-                <label class="btn btn-outline-primary" for="confusedradio3">Bar</label>
-            </div>
-        </div>
-
-        <div class='row m-2'>
-            <div class="col-2">
-                <p style="font-size: large;">Gaze:</p>
-            </div>
-            <div class="btn-group col-6" role="group" aria-label="Basic radio toggle button group"
-                onchange="handleRadioChange()">
-                <input type="radio" class="btn-check" name="gazeradio" id="gazeradio1" value="Radial" autocomplete="off"
-                    checked>
-                <label class="btn btn-outline-primary" for="gazeradio1">Radial</label>
-
-                <input type="radio" class="btn-check" name="gazeradio" id="gazeradio2" value="Motor" autocomplete="off">
-                <label class="btn btn-outline-primary" for="gazeradio2">Motor</label>
-
-                <input type="radio" class="btn-check" name="gazeradio" id="gazeradio3" value="Bar" autocomplete="off">
-                <label class="btn btn-outline-primary" for="gazeradio3">Bar</label>
-            </div>
-        </div>
-
-        <div class='row m-2'>
-            <div class="col-2">
-                <p style="font-size: large;">Emotion:</p>
-            </div>
-            <div class="btn-group col-6" role="group" aria-label="Basic radio toggle button group"
-                onchange="handleRadioChange()">
-                <input type="radio" class="btn-check" name="emoradio" id="emoradio1" value="Radial" autocomplete="off"
-                    checked>
-                <label class="btn btn-outline-primary" for="emoradio1">Radial</label>
-
-                <input type="radio" class="btn-check" name="emoradio" id="emoradio2" value="Motor" autocomplete="off">
-                <label class="btn btn-outline-primary" for="emoradio2">Motor</label>
-
-                <input type="radio" class="btn-check" name="emoradio" id="emoradio3" value="Bar" autocomplete="off">
-                <label class="btn btn-outline-primary" for="emoradio3">Bar</label>
-            </div>
-        </div>
+        <br />
         <br />
 
         <!-- theme -->
-        <div class='row m-2'>
+        <div class="row m-2 p-2 card"
+            style="border-color: #e2eafc; border-width: 4px; border-radius: 1rem; width:1000px">
             <div class="col-2">
                 <p style="font-size: large;">Theme:</p>
             </div>
