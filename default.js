@@ -1,7 +1,7 @@
 function handleThresholdChange() {
   //   console.log($("#threshold")[0].value);
   const threshold = $("#threshold")[0].value;
-  $("#thresholdtext").html("> " + threshold);
+  $("#thresholdtext").html("> " + threshold + "%");
 }
 
 function handleHidden() {
@@ -220,6 +220,18 @@ function loadDefaultWindow() {
 
   // trigger
   setInterval(function () {
+    var emoji_data = {
+        confusion: 0,
+        smile: 0,
+        headnod: 0,
+        headshake: 0,
+        drowsiness: 0,
+        speaking: 0,
+      },
+      max_value = 0,
+      max_key = "",
+      total_ppl = 0;
+
     // get data from backend
     $.ajax({
       url: "http://49.232.60.34:5000/get_class_information",
@@ -228,45 +240,38 @@ function loadDefaultWindow() {
       success: function (res) {
         // console.log("getting data from backend");
         var live_data = JSON.parse(res);
-        console.log(live_data);
-        // console.log(correspond_name[name]);
-        // if (correspond_name[name] == "emotion") {
-        //   live_data.forEach((d) => {
-        //     // console.log(d[correspond_name[name]].split(" "));
-        //     return (norm_data += parseFloat(
-        //       d[correspond_name[name]].split(" ")[0]
-        //     ));
-        //   });
-        //   norm_data /= live_data.length;
-        //   norm_data = (norm_data + 1) / 2;
-        // } else {
-        //   live_data.forEach(
-        //     (d) => (norm_data += parseFloat(d[correspond_name[name]]))
-        //   );
-        //   norm_data /= live_data.length;
-        // }
-        // console.log("normalized data:", norm_data);
+        // console.log(live_data);
+
+        for (const [key, value] of Object.entries(emoji_data)) {
+          var total = 0;
+          total_ppl = live_data.length;
+          live_data.forEach((d) => {
+            return (total += parseInt(d[key]));
+          });
+          // console.log(key, total);
+          emoji_data[key] = total;
+        }
+        // get max value
+        max_value = Math.max(...Object.values(emoji_data));
+        // find corresponding key
+        max_key = Object.keys(emoji_data).find(
+          (key) => emoji_data[key] == max_value
+        );
+        // console.log(max_key, max_value);
       },
     });
 
-    const value = Math.round(Math.random() * 100);
+    // const value = Math.round(Math.random() * 100);
+    const ratio = max_value / total_ppl;
     const threshold = $("#threshold")[0].value;
-    if (value > threshold) {
+    if (ratio * 100 > threshold) {
       // $("#trigger-img").show();
       // $("#trigger-text").show();
 
       // change the height of the card
       $("#defaultTrigger").css("height", "8rem");
 
-      imglist = [
-        "./emoji/confusion.gif",
-        "./emoji/smile.gif",
-        "./emoji/headnod.gif",
-        "./emoji/headshake.gif",
-        "./emoji/drowsiness.gif",
-        "./emoji/speaking.gif",
-      ];
-      const i = Math.floor(Math.random() * imglist.length);
+      // const i = Math.floor(Math.random() * imglist.length);
       //   console.log(imglist[i]);
 
       // $("#trigger-img").attr("src", imglist[i]);
@@ -280,7 +285,7 @@ function loadDefaultWindow() {
 
       var img = svg
         .append("image")
-        .attr("xlink:href", imglist[i])
+        .attr("xlink:href", `./emoji/${max_key}.gif`)
         .attr("width", 60)
         .attr("height", 60)
         .attr("x", 0)
@@ -299,7 +304,7 @@ function loadDefaultWindow() {
         .attr("y", 15)
         .attr("fill", "white")
         .attr("font-size", 15)
-        .text(value)
+        .text(max_value)
         .attr("text-anchor", "middle");
     } else {
       // change the height of the card
