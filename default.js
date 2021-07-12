@@ -259,13 +259,12 @@ function loadDefaultWindow() {
       $("#defaultTrigger").css("height", "8rem");
 
       imglist = [
-        "./emoji/frown.gif",
-        "./emoji/laugh.gif",
-        "./emoji/nod.gif",
-        "./emoji/shake.gif",
-        "./emoji/sleep.gif",
+        "./emoji/confusion.gif",
         "./emoji/smile.gif",
-        "./emoji/speak.gif",
+        "./emoji/headnod.gif",
+        "./emoji/headshake.gif",
+        "./emoji/drowsiness.gif",
+        "./emoji/speaking.gif",
       ];
       const i = Math.floor(Math.random() * imglist.length);
       //   console.log(imglist[i]);
