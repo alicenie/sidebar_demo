@@ -140,10 +140,10 @@ function loadDefaultWindow() {
   $("#sortable").sortable({
     // placeholder: "ui-state-highlight",
   });
-  $("#sortable").disableSelection();
+  // $("#sortable").disableSelection();
 
   // initial width
-  const width = $(window).width - 50;
+  const width = $(window).width - 30;
   $("#defaultchart2").css("width", width);
   // $("#defaultchart2").css("height", width + 50);
   $("#defaultchart3").css("width", width);
