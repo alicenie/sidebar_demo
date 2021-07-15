@@ -36,3 +36,7 @@ p.trigger-text {
 .highcharts-container svg {
   width: 100% !important;
 }
+
+#emotion_title {
+  font-family: "Lucida Grande";
+}

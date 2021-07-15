@@ -36,6 +36,10 @@ var radialInterval1,
     total_ppl: 0,
     max_value: 0,
     max_key: "",
+  },
+  emotion = {
+    x: [],
+    y: [],
   };
 
 const correspond_name = {
@@ -131,9 +135,14 @@ function getServerData() {
       Object.keys(chartData).forEach((name) => {
         var norm_data = 0;
         if (name == "emotion") {
+          var x = [],
+            y = [];
           live_data.forEach((d) => {
             norm_data += parseFloat(d[name].split(" ")[0]);
+            x.push(parseFloat(d[name].split(" ")[0]));
+            y.push(parseFloat(d[name].split(" ")[1]));
           });
+          emotion = { x, y };
           norm_data /= live_data.length;
           norm_data = (norm_data + 1) / 2;
         } else {
@@ -155,6 +164,7 @@ function getServerData() {
 
 function loadDefaultWindow() {
   setInterval(getServerData, 1000);
+  setInterval(create_emotion_wheel, 1000);
   // get the chart type
   var cookieList = document.cookie.split("; ");
   console.log("cookie list:", cookieList);
@@ -277,20 +287,20 @@ function loadDefaultWindow() {
   }
 
   // draw default 4 emotion
-  if (barInterval4) clearInterval(barInterval4);
-  if (radialInterval4) clearInterval(radialInterval4);
-  if (motorInterval4) clearInterval(motorInterval4);
+  // if (barInterval4) clearInterval(barInterval4);
+  // if (radialInterval4) clearInterval(radialInterval4);
+  // if (motorInterval4) clearInterval(motorInterval4);
 
-  if (emoChartType == "Motor") {
-    drawMotorChart("defaultchart4", "Emotion", theme);
-    $("#defaultchart4").css("height", 120);
-  } else if (emoChartType == "Radial") {
-    drawRadialChart("defaultchart4", "Emotion", theme);
-    $("#defaultchart4").css("height", 140);
-  } else {
-    drawBarChart("defaultchart4", "Emotion", theme);
-    $("#defaultchart4").css("height", 90);
-  }
+  // if (emoChartType == "Motor") {
+  //   drawMotorChart("defaultchart4", "Emotion", theme);
+  //   $("#defaultchart4").css("height", 120);
+  // } else if (emoChartType == "Radial") {
+  //   drawRadialChart("defaultchart4", "Emotion", theme);
+  //   $("#defaultchart4").css("height", 140);
+  // } else {
+  //   drawBarChart("defaultchart4", "Emotion", theme);
+  //   $("#defaultchart4").css("height", 90);
+  // }
 
   // trigger
   setInterval(function () {
