@@ -25,7 +25,18 @@ var radialInterval1,
   default1 = 0,
   default2 = 0,
   default3 = 0,
-  default4 = 0;
+  default4 = 0,
+  chartData = {
+    confusion: 0,
+    engagement: 0,
+    gaze: 0,
+    emotion: 0,
+  },
+  emojiData = {
+    total_ppl: 0,
+    max_value: 0,
+    max_key: "",
+  };
 
 const correspond_name = {
   Confused: "confusion",
@@ -80,7 +91,70 @@ const themes = {
   },
 };
 
+function getServerData() {
+  // get data from backend
+  $.ajax({
+    url: "http://49.232.60.34:5000/get_class_information",
+    type: "GET",
+    success: function (res) {
+      // console.log("getting data from backend");
+      var live_data = JSON.parse(res);
+      console.log(live_data);
+
+      // get emoji data
+      var emoji_data = {
+        confusion: 0,
+        smile: 0,
+        headnod: 0,
+        headshake: 0,
+        drowsiness: 0,
+        speaking: 0,
+      };
+
+      for (const [key, value] of Object.entries(emoji_data)) {
+        var total = 0;
+        emojiData.total_ppl = live_data.length;
+        live_data.forEach((d) => {
+          return (total += parseInt(d[key]));
+        });
+        // console.log(key, total);
+        emoji_data[key] = total;
+      }
+      // get max value
+      emojiData.max_value = Math.max(...Object.values(emoji_data));
+      // find corresponding key
+      emojiData.max_key = Object.keys(emoji_data).find(
+        (key) => emoji_data[key] == emojiData.max_value
+      );
+
+      // get chart data
+      Object.keys(chartData).forEach((name) => {
+        var norm_data = 0;
+        if (name == "emotion") {
+          live_data.forEach((d) => {
+            norm_data += parseFloat(d[name].split(" ")[0]);
+          });
+          norm_data /= live_data.length;
+          norm_data = (norm_data + 1) / 2;
+        } else {
+          live_data.forEach((d) => {
+            // console.log(parseFloat(d[name]));
+            norm_data += parseFloat(d[name]);
+          });
+          norm_data /= live_data.length;
+        }
+
+        console.log(name, norm_data);
+        chartData[name] = norm_data;
+      });
+      console.log("getServerData chartData", chartData);
+      // console.log("normalized data:", norm_data);
+    },
+  });
+}
+
 function loadDefaultWindow() {
+  setInterval(getServerData, 1000);
   // get the chart type
   var cookieList = document.cookie.split("; ");
   console.log("cookie list:", cookieList);
@@ -220,61 +294,11 @@ function loadDefaultWindow() {
 
   // trigger
   setInterval(function () {
-    var emoji_data = {
-        confusion: 0,
-        smile: 0,
-        headnod: 0,
-        headshake: 0,
-        drowsiness: 0,
-        speaking: 0,
-      },
-      max_value = 0,
-      max_key = "",
-      total_ppl = 0;
-
-    // get data from backend
-    $.ajax({
-      url: "http://49.232.60.34:5000/get_class_information",
-      type: "GET",
-      async: false,
-      success: function (res) {
-        // console.log("getting data from backend");
-        var live_data = JSON.parse(res);
-        // console.log(live_data);
-
-        for (const [key, value] of Object.entries(emoji_data)) {
-          var total = 0;
-          total_ppl = live_data.length;
-          live_data.forEach((d) => {
-            return (total += parseInt(d[key]));
-          });
-          // console.log(key, total);
-          emoji_data[key] = total;
-        }
-        // get max value
-        max_value = Math.max(...Object.values(emoji_data));
-        // find corresponding key
-        max_key = Object.keys(emoji_data).find(
-          (key) => emoji_data[key] == max_value
-        );
-        // console.log(max_key, max_value);
-      },
-    });
-
-    $("#threshold").attr("max", total_ppl);
+    $("#threshold").attr("max", emojiData.total_ppl);
     const threshold = $("#threshold")[0].value;
-    if (max_value > threshold) {
-      // $("#trigger-img").show();
-      // $("#trigger-text").show();
-
+    if (emojiData.max_value > threshold) {
       // change the height of the card
       $("#defaultTrigger").css("height", "8rem");
-
-      // const i = Math.floor(Math.random() * imglist.length);
-      //   console.log(imglist[i]);
-
-      // $("#trigger-img").attr("src", imglist[i]);
-      // $("#trigger-text").html(value + "%");
 
       // svg
       var svg = d3.select("svg#trigger-svg");
@@ -284,7 +308,7 @@ function loadDefaultWindow() {
 
       var img = svg
         .append("image")
-        .attr("xlink:href", `./emoji/${max_key}.gif`)
+        .attr("xlink:href", `./emoji/${emojiData.max_key}.gif`)
         .attr("width", 60)
         .attr("height", 60)
         .attr("x", 0)
@@ -303,7 +327,7 @@ function loadDefaultWindow() {
         .attr("y", 15)
         .attr("fill", "white")
         .attr("font-size", 15)
-        .text(max_value)
+        .text(emojiData.max_value)
         .attr("text-anchor", "middle");
     } else {
       // change the height of the card
@@ -317,7 +341,7 @@ function loadDefaultWindow() {
       // $("#trigger-img").hide();
       // $("#trigger-text").hide();
     }
-  }, 3000);
+  }, 1000);
 }
 
 function drawRadialChart(container, name, theme) {
@@ -438,45 +462,15 @@ function drawRadialChart(container, name, theme) {
     .add();
 
   var radialInterval = setInterval(function () {
-    if (RadialChart) {
+    if (RadialChart.series) {
       data = [];
-      norm_data = 0;
-      // get data from backend
-      $.ajax({
-        url: "http://49.232.60.34:5000/get_class_information",
-        type: "GET",
-        async: false,
-        success: function (res) {
-          // console.log("getting data from backend");
-          var live_data = JSON.parse(res);
-          // console.log(live_data);
-          // console.log(correspond_name[name]);
-          if (correspond_name[name] == "emotion") {
-            live_data.forEach((d) => {
-              // console.log(d[correspond_name[name]].split(" "));
-              return (norm_data += parseFloat(
-                d[correspond_name[name]].split(" ")[0]
-              ));
-            });
-            norm_data /= live_data.length;
-            norm_data = (norm_data + 1) / 2;
-          } else {
-            live_data.forEach(
-              (d) => (norm_data += parseFloat(d[correspond_name[name]]))
-            );
-            norm_data /= live_data.length;
-          }
-          // console.log("normalized data:", norm_data);
-        },
-      });
-
-      data.push(norm_data * 150);
+      data.push(chartData[correspond_name[name]] * 150);
       RadialChart.series[0].setData(data);
       // console.log("radial chart set data");
     }
-  }, 2000);
+  }, 1000);
 
-  return radialInterval;
+  // return radialInterval;
 }
 
 function drawMotorChart(container, name, theme) {
@@ -613,41 +607,9 @@ function drawMotorChart(container, name, theme) {
   var motorInterval = setInterval(function () {
     var point, newVal, inc;
 
-    if (MotorChart) {
+    if (MotorChart.series) {
       point = MotorChart.series[0].points[0];
-
-      norm_data = 0;
-      // get data from backend
-      $.ajax({
-        url: "http://49.232.60.34:5000/get_class_information",
-        type: "GET",
-        async: false,
-        success: function (res) {
-          // console.log("getting data from backend");
-          var live_data = JSON.parse(res);
-          // console.log(live_data);
-          // var norm_data = 0;
-          // console.log(correspond_name[name]);
-          if (correspond_name[name] == "emotion") {
-            live_data.forEach((d) => {
-              // console.log(d[correspond_name[name]].split(" "));
-              return (norm_data += parseFloat(
-                d[correspond_name[name]].split(" ")[0]
-              ));
-            });
-            norm_data /= live_data.length;
-            norm_data = (norm_data + 1) / 2;
-          } else {
-            live_data.forEach(
-              (d) => (norm_data += parseFloat(d[correspond_name[name]]))
-            );
-            norm_data /= live_data.length;
-          }
-          // console.log("normalized data:", norm_data);
-        },
-      });
-
-      inc = Math.round((norm_data - 0.5) * 100);
+      inc = (chartData[correspond_name[name]] - 0.5) * 100;
       newVal = point.y + inc;
 
       if (newVal < 0 || newVal > 200) {
@@ -656,7 +618,7 @@ function drawMotorChart(container, name, theme) {
 
       point.update(newVal);
     }
-  }, 2000);
+  }, 1000);
 
   return motorInterval;
 }
@@ -747,44 +709,13 @@ function drawBarChart(container, name, theme, barInterval) {
     .add();
 
   var barInterval = setInterval(function () {
-    if (BarChart) {
+    if (BarChart.series) {
       data = [];
-      norm_data = 0;
-      // get data from backend
-      $.ajax({
-        url: "http://49.232.60.34:5000/get_class_information",
-        type: "GET",
-        async: false,
-        success: function (res) {
-          // console.log("getting data from backend");
-          var live_data = JSON.parse(res);
-          // console.log(live_data);
-          // var norm_data = 0;
-          // console.log(correspond_name[name]);
-          if (correspond_name[name] == "emotion") {
-            live_data.forEach((d) => {
-              // console.log(d[correspond_name[name]].split(" "));
-              return (norm_data += parseFloat(
-                d[correspond_name[name]].split(" ")[0]
-              ));
-            });
-            norm_data /= live_data.length;
-            norm_data = (norm_data + 1) / 2;
-          } else {
-            live_data.forEach((d) => {
-              // console.log(parseFloat(d[correspond_name[name]]));
-              return (norm_data += parseFloat(d[correspond_name[name]]));
-            });
-            norm_data /= live_data.length;
-          }
-          // console.log("normalized data:", norm_data);
-        },
-      });
-      data.push(norm_data * 150);
+      data.push(chartData[correspond_name[name]] * 150);
       BarChart.series[0].setData(data);
       // console.log("bar chart set data");
     }
-  }, 2000);
+  }, 1000);
 
   return barInterval;
 }
