@@ -826,37 +826,37 @@ function handleDefaultChart3() {
   default3 = (default3 + 1) % 3;
 }
 
-function handleDefaultChart4() {
-  // get theme
-  var cookieList = document.cookie.split("; ");
-  var themeid,
-    themeName = "themeid";
-  cookieList.forEach((val) => {
-    if (val.indexOf(themeName) === 0)
-      themeid = val.substring(themeName.length + 1);
-  });
-  const theme = themes[themeid];
+// function handleDefaultChart4() {
+//   // get theme
+//   var cookieList = document.cookie.split("; ");
+//   var themeid,
+//     themeName = "themeid";
+//   cookieList.forEach((val) => {
+//     if (val.indexOf(themeName) === 0)
+//       themeid = val.substring(themeName.length + 1);
+//   });
+//   const theme = themes[themeid];
 
-  console.log("handle default chart 1");
-  if (barInterval4) clearInterval(barInterval4);
-  if (radialInterval4) clearInterval(radialInterval4);
-  if (motorInterval4) clearInterval(motorInterval4);
+//   console.log("handle default chart 1");
+//   if (barInterval4) clearInterval(barInterval4);
+//   if (radialInterval4) clearInterval(radialInterval4);
+//   if (motorInterval4) clearInterval(motorInterval4);
 
-  if (default4 == 0) {
-    drawMotorChart("defaultchart4", "Emotion", theme);
-    document.cookie = "emocharttype=Motor";
-    $("#defaultchart4").css("height", 120);
-  } else if (default4 == 1) {
-    drawRadialChart("defaultchart4", "Emotion", theme);
-    document.cookie = "emocharttype=Radial";
-    $("#defaultchart4").css("height", 140);
-  } else {
-    drawBarChart("defaultchart4", "Emotion", theme);
-    document.cookie = "emocharttype=Bar";
-    $("#defaultchart4").css("height", 90);
-  }
-  default4 = (default4 + 1) % 3;
-}
+//   if (default4 == 0) {
+//     drawMotorChart("defaultchart4", "Emotion", theme);
+//     document.cookie = "emocharttype=Motor";
+//     $("#defaultchart4").css("height", 120);
+//   } else if (default4 == 1) {
+//     drawRadialChart("defaultchart4", "Emotion", theme);
+//     document.cookie = "emocharttype=Radial";
+//     $("#defaultchart4").css("height", 140);
+//   } else {
+//     drawBarChart("defaultchart4", "Emotion", theme);
+//     document.cookie = "emocharttype=Bar";
+//     $("#defaultchart4").css("height", 90);
+//   }
+//   default4 = (default4 + 1) % 3;
+// }
 
 const containers = [
   "defaultchart1",
