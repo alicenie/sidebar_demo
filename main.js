@@ -59,7 +59,7 @@ function ToDashboard() {
 function handleWindowResize() {
   console.log(window.innerWidth);
   // console.log("charts:", Highcharts.charts);
-  var width = window.innerWidth - 50;
+  var width = window.innerWidth - 25;
   $("#defaultchart2").css("width", width);
   // $("#defaultchart2").css("height", width + 50);
   $("#defaultchart3").css("width", width);

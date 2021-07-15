@@ -32,3 +32,7 @@ p.trigger-text {
   opacity: 0.3;
   fill: rgb(164, 214, 248);
 } */
+.highcharts-container,
+.highcharts-container svg {
+  width: 100% !important;
+}
