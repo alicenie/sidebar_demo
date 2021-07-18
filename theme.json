@@ -17,7 +17,8 @@
         "fullchart0": "254,240,217",
         "fullchart1": "253,204,138",
         "fullchart2": "252,141,89",
-        "fullchart3": "227,74,51"
+        "fullchart3": "227,74,51",
+        "fullchart4": "179,0,0"
       }
     },
 
@@ -38,7 +39,8 @@
         "fullchart0": "239,243,255",
         "fullchart1": "189,215,231",
         "fullchart2": "107,174,214",
-        "fullchart3": "49,130,189"
+        "fullchart3": "49,130,189",
+        "fullchart4": "8,81,156"
       }
     },
 
@@ -59,7 +61,8 @@
         "fullchart0": "237,248,233",
         "fullchart1": "186,228,179",
         "fullchart2": "116,196,118",
-        "fullchart3": "49,163,84"
+        "fullchart3": "49,163,84",
+        "fullchart4": "0,109,44"
       }
     }
   }

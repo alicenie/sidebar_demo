@@ -17,13 +17,16 @@ var fullinterval0,
     emotion: 0,
     confusion: 0,
     gaze: 0,
-  };
+  },
+  slide_range = [],
+  current_heatpos = [];
 // current stage info don't need to be stored in local storage, can be directly sent to chart
-// average of historical data can be calculated each time in drawRadarChart thru local storage
+// average of historical data can be calculated each time in drawRadarChart through local storage
 
 function getServerData() {
   var x = new Date().getTime(),
     eng = [],
+    heatpos = [],
     total = {
       engagement: 0,
       emotion: 0,
@@ -34,7 +37,15 @@ function getServerData() {
       headshake: 0,
       smile: 0,
       speaking: 0,
-    };
+    },
+    cur_emo_percentage = {
+      upperRight: 0,
+      lowerRight: 0,
+      lowerLeft: 0,
+      upperLeft: 0,
+      neutral: 0,
+    },
+    cur_emo_line = { valence: 0, arousal: 0 };
 
   $.ajax({
     url: "http://49.232.60.34:5000/get_class_information",
@@ -48,6 +59,16 @@ function getServerData() {
         if (key == "emotion") {
           data.forEach((d) => {
             total[key] += parseFloat(d[key].split(" ")[0]);
+            var x = parseFloat(d[key].split(" ")[0]),
+              y = parseFloat(d[key].split(" ")[1]);
+            if (x > 0.2 && y > 0.2) cur_emo_percentage.upperRight += 1;
+            else if (x > 0.2 && y < -0.2) cur_emo_percentage.lowerRight += 1;
+            else if (x < -0.2 && y < -0.2) cur_emo_percentage.lowerLeft += 1;
+            else if (x < -0.2 && y > 0.2) cur_emo_percentage.upperLeft += 1;
+            else cur_emo_percentage.neutral += 1;
+            cur_emo_line.valence += x;
+            cur_emo_line.arousal += y;
+            heatpos.push([x, y]);
           });
         } else if (key == "engagement") {
           data.forEach((d) => {
@@ -60,6 +81,9 @@ function getServerData() {
           });
         }
       }
+      // pass new heat pos info to add points on heatmap
+      current_heatpos = heatpos;
+
       // get sum data for trigger
       Object.keys(trigger).forEach((key) => (trigger[key] = total[key]));
       console.log("trigger", trigger);
@@ -87,6 +111,22 @@ function getServerData() {
         else list_json.push([x, current[d]]);
         list = JSON.stringify(list_json);
         localStorage.setItem(d, list);
+      });
+      // store 5 categories for emotion percentage chart
+      Object.keys(cur_emo_percentage).forEach((key) => {
+        var list = localStorage.getItem(key);
+        list_json = list ? JSON.parse(list) : [];
+        list_json.push([x, cur_emo_percentage[key]]);
+        list = JSON.stringify(list_json);
+        localStorage.setItem(key, list);
+      });
+      // valence and arousal (non-normalized)
+      Object.keys(cur_emo_line).forEach((key) => {
+        var list = localStorage.getItem(key);
+        list_json = list ? JSON.parse(list) : [];
+        list_json.push([x, cur_emo_line[key] / data.length]);
+        list = JSON.stringify(list_json);
+        localStorage.setItem(key, list);
       });
 
       console.log("localstorage:", localStorage);
@@ -119,6 +159,15 @@ function loadFullWindow() {
     $("#fullchart4").width($("#fulldiv4").width() - 40);
     $("#fullchart4").height($("#fulldiv4").height() - 40);
 
+    $("#fullchart5").width($("#fulldiv5").width() - 40);
+    $("#fullchart5").height($("#fulldiv5").height() - 40);
+
+    $("#fullchart6").width($("#fulldiv6").width() - 40);
+    $("#fullchart6").height($("#fulldiv6").height() - 40);
+
+    $("#fullchart7").width($("#fulldiv7").width() - 70);
+    $("#fullchart7").height($("#fulldiv7").height() - 40);
+
     // console.log("fulldiv1 width", $("#fulldiv1").width());
     // console.log("fulldiv1 height", $("#fulldiv1").height());
     // console.log("fullchart1 width", $("#fullchart1").width());
@@ -141,6 +190,15 @@ function loadFullWindow() {
     $("#fullchart4").width($("#fulldiv4").width() - 40);
     $("#fullchart4").height($("#fulldiv4").height() - 40);
 
+    $("#fullchart5").width($("#fulldiv5").width() - 40);
+    $("#fullchart5").height($("#fulldiv5").height() - 40);
+
+    $("#fullchart6").width($("#fulldiv6").width() - 40);
+    $("#fullchart6").height($("#fulldiv6").height() - 40);
+
+    $("#fullchart7").width($("#fulldiv7").width() - 70);
+    $("#fullchart7").height($("#fulldiv7").height() - 40);
+
     fullChart0.setSize(
       $("#fulldiv0").width() - 40,
       $("#fulldiv0").height() - 40
@@ -149,9 +207,6 @@ function loadFullWindow() {
       $("#fulldiv1").width() - 40,
       $("#fulldiv1").height() - 40
     );
-    // $("#fullchart1").css("width", $("#fulldiv1").width());
-    // $("#fullchart1").css("height", $("#fulldiv1").height());
-    console.log("fullchart1", fullChart1);
 
     fullChart2.setSize(
       $("#fullchart2").width() - 40,
@@ -165,6 +220,15 @@ function loadFullWindow() {
     fullChart4.setSize(
       $("#fullchart4").width() - 40,
       $("#fullchart4").height() - 40
+    );
+
+    fullChart5.setSize(
+      $("#fullchart5").width() - 40,
+      $("#fullchart5").height() - 40
+    );
+    fullChart6.setSize(
+      $("#fullchart6").width() - 40,
+      $("#fullchart6").height() - 40
     );
   });
 
@@ -200,6 +264,12 @@ function loadFullWindow() {
   drawFullChart3();
 
   drawFullChart4();
+
+  drawFullChart5();
+
+  drawFullChart6();
+
+  drawFullChart7();
 
   // drawLineChart("fullchart3");
 
@@ -420,8 +490,18 @@ function drawFullChart2() {
 
     xAxis: {
       type: "datetime",
-      tickInterval: 10,
+      // tickInterval: 10,
       min: startTime,
+      tickPixelInterval: 100,
+      // tickPositioner: function () {
+      //   date = new Date(this.dataMin);
+      //   hour = date.getHours().toString();
+      //   min = date.getMinutes().toString();
+      //   time = hour + ":" + min;
+      //   console.log(typeof hour, new Date(this.dataMin).getMinutes());
+
+      //   return ["time", this.dataMax];
+      // },
       // min: 1625842192120,
     },
 
@@ -473,9 +553,32 @@ function drawFullChart3() {
 
     xAxis: {
       type: "datetime",
-      tickInterval: 10,
+      // tickInterval: 10,
+      tickPixelInterval: 100,
       min: startTime,
       // min: 1625842192120,
+      plotBands: [
+        {
+          from: startTime,
+          to: startTime + 10000,
+          color: "rgba(68, 170, 213, .2)",
+        },
+        {
+          from: startTime + 20000,
+          to: startTime + 25000,
+          color: "rgba(68, 170, 213, .2)",
+        },
+        {
+          from: startTime + 30000,
+          to: startTime + 40000,
+          color: "rgba(68, 170, 213, .2)",
+        },
+        {
+          from: startTime + 50000,
+          to: startTime + 60000,
+          color: "rgba(68, 170, 213, .2)",
+        },
+      ],
     },
 
     series: [
@@ -492,6 +595,8 @@ function drawFullChart3() {
       var list_json = list ? JSON.parse(list) : [];
       newdata = list_json.map((d) => [d[0], d[1] - threshold]);
       fullChart3.series[0].setData(newdata);
+
+      // fullChart3.xAxis[0].addPlotBand(plotBands[0]);
     }
   }, 1000);
 }
@@ -507,7 +612,7 @@ function drawFullChart4() {
     },
 
     title: {
-      text: "Attention",
+      text: "Engagement",
     },
 
     subtitle: {
@@ -528,14 +633,15 @@ function drawFullChart4() {
 
     xAxis: {
       type: "datetime",
-      tickInterval: 10,
+      // tickInterval: 10,
       min: startTime,
+      tickPixelInterval: 100,
       // min: 1625842192120,
     },
 
     series: [
       {
-        name: "Attention",
+        name: "Engagement",
         data: [],
         zIndex: 1,
         marker: {
@@ -572,7 +678,262 @@ function drawFullChart4() {
   }, 1000);
 }
 
-const containers = ["fullchart1", "fullchart2", "fullchart3"];
+function drawFullChart5() {
+  var startTime = new Date().getTime();
+  fullChart5 = Highcharts.chart("fullchart5", {
+    credits: false,
+    chart: {
+      type: "area",
+      width: $("#fulldiv5").width() - 40,
+      height: $("#fulldiv5").height() - 40,
+    },
+
+    title: {
+      text: "Emotion",
+    },
+
+    subtitle: {
+      text: "Historical data (updata per second)",
+    },
+
+    // tooltip: {
+    //   valueDecimals: 2,
+    //   useHTML: true,
+    //   formatter: function () {
+    //     return `<div style="min-height: 120px;">
+    //     <img src="https://img.webmd.com/dtmcms/live/webmd/consumer_assets/site_images/article_thumbnails/other/dog_cool_summer_slideshow/1800x1200_dog_cool_summer_other.jpg" width="150"/>
+    //     <br />► ${this.series.name}: ${this.point.y.toFixed(2)}<br /></div>`;
+    //   },
+    // },
+
+    xAxis: {
+      type: "datetime",
+      // tickInterval: 10,
+      format: "{value}",
+      tickPixelInterval: 100,
+      // min: startTime,
+      // min: 1625842192120,
+    },
+
+    yAxis: {
+      labels: {
+        format: "{value}%",
+      },
+      title: {
+        enabled: false,
+      },
+    },
+
+    plotOptions: {
+      area: {
+        stacking: "percent",
+        lineColor: "#ffffff",
+        lineWidth: 1,
+        marker: {
+          lineWidth: 1,
+          lineColor: "#ffffff",
+        },
+        accessibility: {
+          pointDescriptionFormatter: function (point) {
+            function round(x) {
+              return Math.round(x * 100) / 100;
+            }
+            return (
+              point.index +
+              1 +
+              ", " +
+              point.category +
+              ", " +
+              point.y +
+              " people, " +
+              round(point.percentage) +
+              "%, " +
+              point.series.name
+            );
+          },
+        },
+      },
+    },
+
+    series: [
+      {
+        name: "Neutral",
+        data: [502, 635, 809, 947, 1402, 3634, 5268],
+      },
+      {
+        name: "Energize",
+        data: [106, 107, 111, 133, 221, 767, 1766],
+      },
+      {
+        name: "Renew",
+        data: [163, 203, 276, 408, 547, 729, 628],
+      },
+      {
+        name: "Burnout",
+        data: [18, 31, 54, 156, 339, 818, 1201],
+      },
+      {
+        name: "Stress",
+        data: [2, 2, 2, 6, 13, 30, 46],
+      },
+    ],
+  });
+
+  fullinterval5 = setInterval(function () {
+    if (fullChart5.series) {
+      const categories = [
+        "neutral",
+        "upperRight",
+        "lowerRight",
+        "lowerLeft",
+        "upperLeft",
+      ];
+      categories.forEach((d, i) => {
+        var list = localStorage.getItem(d);
+        var list_json = list ? JSON.parse(list) : [];
+        fullChart5.series[i].setData(list_json);
+      });
+    }
+  }, 1000);
+}
+
+function drawFullChart6() {
+  var startTime = new Date().getTime();
+  fullChart6 = Highcharts.chart("fullchart6", {
+    credits: false,
+    chart: {
+      width: $("#fulldiv6").width() - 40,
+      height: $("#fulldiv6").height() - 40,
+    },
+
+    title: {
+      text: "Emotion -- valence and arousal",
+    },
+
+    subtitle: {
+      text: "Historical data (updata per second)",
+    },
+
+    tooltip: {
+      valueDecimals: 2,
+      useHTML: true,
+      formatter: function () {
+        return `<div style="min-height: 120px;">
+        <img src="https://img.webmd.com/dtmcms/live/webmd/consumer_assets/site_images/article_thumbnails/other/dog_cool_summer_slideshow/1800x1200_dog_cool_summer_other.jpg" width="150"/>
+        <br />► ${this.series.name}: ${this.point.y.toFixed(2)}<br /></div>`;
+      },
+    },
+
+    xAxis: {
+      type: "datetime",
+      // tickInterval: 10,
+      min: startTime,
+      tickPixelInterval: 100,
+      // min: 1625842192120,
+    },
+
+    series: [
+      {
+        lineWidth: 0.5,
+        name: "Valence",
+      },
+      {
+        lineWidth: 0.5,
+        name: "Arousal",
+      },
+    ],
+  });
+
+  fullinterval6 = setInterval(function () {
+    if (fullChart6.series) {
+      ["valence", "arousal"].forEach((d, i) => {
+        var list = localStorage.getItem(d);
+        var list_json = list ? JSON.parse(list) : [];
+        fullChart6.series[i].setData(list_json);
+      });
+    }
+  }, 1000);
+}
+
+function drawFullChart7() {
+  // minimal heatmap instance configuration
+  var heatmapInstance = h337.create({
+    // only container is required, the rest will be defaults
+    container: document.getElementById("heatmap_container"),
+    maxOpacity: 0.6,
+    minOpacity: 0,
+    blur: 0.5,
+  });
+
+  // now generate some random data
+  var points = [];
+  var max = 0;
+  var width = 300;
+  var height = 300;
+  var len = 10;
+
+  // while (len--) {
+  //   var val = Math.floor(Math.random() * 100);
+  //   max = Math.max(max, val);
+  //   var point = {
+  //     x: Math.floor(Math.random() * width),
+  //     y: Math.floor(Math.random() * height),
+  //     // x: 100 + Math.floor(Math.random() * 10),
+  //     // y: 100 + Math.floor(Math.random() * 10),
+  //     value: val,
+  //   };
+  //   points.push(point);
+  // }
+  // heatmap data format
+  var data = {
+    max: 30,
+    data: [{ x: 0, y: 0, value: 0 }],
+  };
+  // if you have a set of datapoints always use setData instead of addData
+  // for data initialization
+  heatmapInstance.setData(data);
+
+  // add data
+  setInterval(function () {
+    // get history valence and arousal from localStorage (non-normalized)
+    var point = {
+      valence: 0,
+      arousal: 0,
+    };
+    // Object.keys(point).forEach((key) => {
+    //   var list = localStorage.getItem(key);
+    //   list_json = list ? JSON.parse(list) : [];
+    //   list_json.map((d) => d[1]).forEach((i) => (point[key] += (i + 1) / 2)); // sum of history data
+    //   console.log("sum", point[key]);
+    //   point[key] /= list_json.length; // average over time
+    //   console.log("average", point[key]);
+    //   point[key] *= 300; // scale up
+    // });
+    points = current_heatpos.map((d) => {
+      x = ((d[0] + 1) / 2) * 300;
+      y = ((d[1] + 1) / 2) * 300;
+      return { x, y, value: 10 };
+    });
+
+    // var datapoint = {
+    //   x: point["valence"],
+    //   y: point["arousal"],
+    //   value: 10,
+    // };
+    console.log("points", points);
+    heatmapInstance.addData(points);
+    max += 5;
+    heatmapInstance.setDataMax(max);
+  }, 1000);
+}
+
+const containers = [
+  "fullchart0",
+  "fullchart1",
+  "fullchart2",
+  "fullchart3",
+  "fullchart4",
+];
 
 function handleHighlight(container) {
   containers.forEach((item) => {
@@ -595,7 +956,7 @@ function handleUndoHighlight(container) {
 }
 
 function handleDisplayFull(id) {
-  const charts = [fullChart1, fullChart2, fullChart3],
+  const charts = [fullChart0, fullChart1, fullChart2, fullChart3, fullChart4],
     grid = document.querySelector(".grid-stack").gridstack;
 
   if ($(`#fullcheck${id.toString()}`)[0].checked) {
@@ -631,19 +992,26 @@ function handleDisplayFull(id) {
       }
     });
 
-    if (id == 1) {
+    if (id == 0) {
+      clearInterval(fullinterval0);
+      drawFullChart0();
+    } else if (id == 1) {
       clearInterval(fullinterval1);
       drawFullChart1();
     } else if (id == 2) {
       clearInterval(fullinterval2);
-      drawAreaChart("fullchart2");
+      drawFullChart2();
     } else if (id == 3) {
       clearInterval(fullinterval3);
-      drawLineChart("fullchart3");
+      drawFullChart3();
+    } else if (id == 4) {
+      clearInterval(fullinterval4);
+      drawFullChart4();
     }
   } else {
     // remove highchart
-    charts[id - 1].destroy();
+    charts[id].destroy();
+    console.log("remove", charts[id]);
     // hide card container
     // $(`#fullchart${id.toString()}`).hide();
     // remove gridstack widget

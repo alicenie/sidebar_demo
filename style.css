@@ -37,10 +37,15 @@ p.trigger-text {
   width: 100% !important;
 }
 
-#emotion_title {
+#emotion_title,
+#heatmap_title {
   font-family: "Lucida Grande";
 }
 
 ::-webkit-scrollbar {
   display: none;
 }
+
+/* #heatmap_container {
+  background-image: url("./emo_heatmap.png");
+} */

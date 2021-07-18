@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "gridstack": "^4.2.6",
+    "heatmap.js": "^2.0.5"
+  }
+}
