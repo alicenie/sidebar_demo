@@ -40,3 +40,7 @@ p.trigger-text {
 #emotion_title {
   font-family: "Lucida Grande";
 }
+
+::-webkit-scrollbar {
+  display: none;
+}

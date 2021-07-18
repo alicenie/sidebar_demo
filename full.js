@@ -1,30 +1,112 @@
-var fullinterval1, fullinterval2, fullinterval3, updateFullInterval;
+var fullinterval0,
+  fullinterval1,
+  fullinterval2,
+  fullinterval3,
+  fullinterval4,
+  updateFullInterval,
+  trigger = {
+    confusion: 0,
+    drowsiness: 0,
+    headnod: 0,
+    headshake: 0,
+    smile: 0,
+    speaking: 0,
+  },
+  current = {
+    engagement: 0,
+    emotion: 0,
+    confusion: 0,
+    gaze: 0,
+  };
+// current stage info don't need to be stored in local storage, can be directly sent to chart
+// average of historical data can be calculated each time in drawRadarChart thru local storage
 
-// async function doAjax(ajaxurl) {
-//   var engagement;
-//   await $.ajax({
-//     url: ajaxurl,
-//     type: "GET",
-//     success: function (res) {
-//       console.log("getting data from backend");
-//       data = JSON.parse(res);
-//       // var engagement = 0;
-//       data.forEach((d) => {
-//         engagement += parseFloat(d.engagement);
-//       });
-//       engagement /= data.length;
-//       console.log("ajax success engagement:", engagement);
-//     },
-//   });
-//   return engagement;
-// }
+function getServerData() {
+  var x = new Date().getTime(),
+    eng = [],
+    total = {
+      engagement: 0,
+      emotion: 0,
+      confusion: 0,
+      gaze: 0,
+      drowsiness: 0,
+      headnod: 0,
+      headshake: 0,
+      smile: 0,
+      speaking: 0,
+    };
+
+  $.ajax({
+    url: "http://49.232.60.34:5000/get_class_information",
+    type: "GET",
+    async: false,
+    success: function (res) {
+      console.log("getting data from backend");
+      data = JSON.parse(res);
+      console.log(data);
+      for (const [key, value] of Object.entries(total)) {
+        if (key == "emotion") {
+          data.forEach((d) => {
+            total[key] += parseFloat(d[key].split(" ")[0]);
+          });
+        } else if (key == "engagement") {
+          data.forEach((d) => {
+            eng.push(parseFloat(d[key]));
+            total[key] += parseFloat(d[key]);
+          });
+        } else {
+          data.forEach((d) => {
+            total[key] += parseFloat(d[key]);
+          });
+        }
+      }
+      // get sum data for trigger
+      Object.keys(trigger).forEach((key) => (trigger[key] = total[key]));
+      console.log("trigger", trigger);
+
+      // get average data for radar overview
+      Object.keys(current).forEach((key) => {
+        current[key] = total[key] / data.length;
+        if (key == "emotion") current[key] = (current[key] + 1) / 2;
+      });
+      console.log("current", current); // for radar chart
+
+      // store in local storage
+      var store_categories = [
+        "engagement",
+        "emotion",
+        "confusion",
+        "gaze",
+        "eng_range",
+      ];
+      store_categories.forEach((d) => {
+        var list = localStorage.getItem(d);
+        list_json = list ? JSON.parse(list) : [];
+        if (d == "eng_range")
+          list_json.push([x, Math.min(...eng), Math.max(...eng)]);
+        else list_json.push([x, current[d]]);
+        list = JSON.stringify(list_json);
+        localStorage.setItem(d, list);
+      });
+
+      console.log("localstorage:", localStorage);
+    },
+  }).done(function () {
+    console.log("ajax done");
+  });
+}
 
 function loadFullWindow() {
+  setInterval(getServerData, 1000);
+
   let grid = GridStack.init({
     cellHeight: 100,
   });
 
   setInterval(function () {
+    $("#fullchart0").width($("#fulldiv0").width() - 40);
+    $("#fullchart0").height($("#fulldiv0").height() - 40);
+
     $("#fullchart1").width($("#fulldiv1").width() - 40);
     $("#fullchart1").height($("#fulldiv1").height() - 40);
 
@@ -34,13 +116,19 @@ function loadFullWindow() {
     $("#fullchart3").width($("#fulldiv3").width() - 40);
     $("#fullchart3").height($("#fulldiv3").height() - 40);
 
-    console.log("fulldiv1 width", $("#fulldiv1").width());
-    console.log("fulldiv1 height", $("#fulldiv1").height());
-    console.log("fullchart1 width", $("#fullchart1").width());
-    console.log("fullchart1 height", $("#fullchart1").height());
+    $("#fullchart4").width($("#fulldiv4").width() - 40);
+    $("#fullchart4").height($("#fulldiv4").height() - 40);
+
+    // console.log("fulldiv1 width", $("#fulldiv1").width());
+    // console.log("fulldiv1 height", $("#fulldiv1").height());
+    // console.log("fullchart1 width", $("#fullchart1").width());
+    // console.log("fullchart1 height", $("#fullchart1").height());
   }, 1000);
 
   grid.on("resize", function (e, items) {
+    $("#fullchart0").width($("#fulldiv0").width() - 40);
+    $("#fullchart0").height($("#fulldiv0").height() - 40);
+
     $("#fullchart1").width($("#fulldiv1").width() - 40);
     $("#fullchart1").height($("#fulldiv1").height() - 40);
 
@@ -50,6 +138,13 @@ function loadFullWindow() {
     $("#fullchart3").width($("#fulldiv3").width() - 40);
     $("#fullchart3").height($("#fulldiv3").height() - 40);
 
+    $("#fullchart4").width($("#fulldiv4").width() - 40);
+    $("#fullchart4").height($("#fulldiv4").height() - 40);
+
+    fullChart0.setSize(
+      $("#fulldiv0").width() - 40,
+      $("#fulldiv0").height() - 40
+    );
     fullChart1.setSize(
       $("#fulldiv1").width() - 40,
       $("#fulldiv1").height() - 40
@@ -58,13 +153,19 @@ function loadFullWindow() {
     // $("#fullchart1").css("height", $("#fulldiv1").height());
     console.log("fullchart1", fullChart1);
 
-    fullChart2.setSize($("#fullchart2").width(), $("#fullchart2").height());
-    fullChart3.setSize($("#fullchart3").width(), $("#fullchart3").height());
-    // fullChart4.setSize(
-    //   $("#grid-stack-item-4").width() - 50,
-    //   $("#grid-stack-item-4").height() - 50
-    // );
-    // console.log($("#grid-stack-item-1").width());
+    fullChart2.setSize(
+      $("#fullchart2").width() - 40,
+      $("#fullchart2").height() - 40
+    );
+    fullChart3.setSize(
+      $("#fullchart3").width() - 40,
+      $("#fullchart3").height() - 40
+    );
+
+    fullChart4.setSize(
+      $("#fullchart4").width() - 40,
+      $("#fullchart4").height() - 40
+    );
   });
 
   // get theme
@@ -90,15 +191,19 @@ function loadFullWindow() {
     }
   });
 
+  drawFullChart0();
+
   drawFullChart1();
 
-  // drawFullChart2();
+  drawFullChart2();
 
-  // drawFullChart3();
+  drawFullChart3();
 
-  drawLineChart("fullchart3");
+  drawFullChart4();
 
-  drawAreaChart("fullchart2");
+  // drawLineChart("fullchart3");
+
+  // drawAreaChart("fullchart2");
 }
 
 function handleUnloadFull() {
@@ -107,12 +212,96 @@ function handleUnloadFull() {
   // no need to clear the interval cause all the timers got cleaned when the browser closed
 }
 
+function drawFullChart0() {
+  var categories = ["engagement", "emotion", "confusion", "gaze"];
+  fullChart0 = new Highcharts.chart("fullchart0", {
+    credits: false,
+    chart: {
+      polar: true,
+      width: $("#fulldiv0").width() - 40,
+      height: $("#fulldiv0").height() - 40,
+      reflow: true,
+    },
+
+    title: {
+      text: "Overview",
+    },
+
+    pane: {
+      startAngle: 0,
+      endAngle: 360,
+    },
+
+    xAxis: {
+      tickInterval: 90,
+      min: 0,
+      max: 360,
+      labels: {
+        formatter: function () {
+          return categories[this.value / 90];
+        },
+      },
+    },
+
+    yAxis: {
+      min: 0,
+    },
+
+    plotOptions: {
+      series: {
+        pointStart: 0,
+        pointInterval: 90,
+      },
+      area: {},
+    },
+
+    series: [
+      {
+        type: "area",
+        name: "Average",
+        data: [0, 0, 0, 0],
+      },
+      {
+        type: "line",
+        name: "Current",
+        data: [0, 0, 0, 0],
+      },
+    ],
+  });
+
+  fullinterval0 = setInterval(function () {
+    // calculate average
+    var average = {
+      engagement: 0,
+      emotion: 0,
+      confusion: 0,
+      gaze: 0,
+    };
+
+    Object.keys(average).forEach((key) => {
+      var list = localStorage.getItem(key);
+      list_json = list ? JSON.parse(list) : [];
+      list_json.forEach((d) => {
+        average[key] += d[1];
+      });
+      average[key] /= list_json.length;
+    });
+
+    console.log("average", average);
+
+    if (fullChart0.series) {
+      fullChart0.series[0].setData(Object.values(average));
+      fullChart0.series[1].setData(Object.values(current));
+    }
+  }, 1000);
+}
+
 function drawFullChart1() {
   fullChart1 = new Highcharts.Chart({
     credits: false,
     chart: {
       renderTo: "fullchart1",
-      type: "column",
+      type: "bar",
       reflow: true,
       width: $("#fulldiv1").width() - 40,
       height: $("#fulldiv1").height() - 40,
@@ -121,70 +310,28 @@ function drawFullChart1() {
           // set up the updating of the chart each second
           var series = this.series[0];
           fullinterval1 = setInterval(function () {
-            var data = [];
-            data.push([
-              "01:Inner brow raiser",
-              Math.round(Math.random() * 100),
-            ]);
-            data.push([
-              "02:Outer brow raiser",
-              Math.round(Math.random() * 100),
-            ]);
-            data.push(["04:Brow lowerer", Math.round(Math.random() * 100)]);
-            data.push(["05:Upper lid raiser", Math.round(Math.random() * 100)]);
-            data.push(["06:Cheek raiser", Math.round(Math.random() * 100)]);
-            data.push(["07:Lid tighter", Math.round(Math.random() * 100)]);
-            data.push(["09:Nose wrinkler", Math.round(Math.random() * 100)]);
-            data.push(["10:Upper lip raiser", Math.round(Math.random() * 100)]);
-            data.push([
-              "12:Lip corner puller",
-              Math.round(Math.random() * 100),
-            ]);
-            data.push(["14:Dimpler", Math.round(Math.random() * 100)]);
-            data.push([
-              "15:Lip corner depressor",
-              Math.round(Math.random() * 100),
-            ]);
-            data.push(["17:Chin raiser", Math.round(Math.random() * 100)]);
-            data.push(["20:Lip stretcher", Math.round(Math.random() * 100)]);
-            data.push(["23:Lip tightener", Math.round(Math.random() * 100)]);
-            data.push(["25:Lip part", Math.round(Math.random() * 100)]);
-            data.push(["26:Jaw drop", Math.round(Math.random() * 100)]);
-            data.push(["45:Blink", Math.round(Math.random() * 100)]);
-
-            series.setData(data);
-          }, 2000);
+            series.setData(Object.values(trigger));
+          }, 1000);
         },
       },
     },
     title: {
-      text: "The states of the class",
+      text: "Trigger state of the class",
     },
     xAxis: {
       categories: [
-        "01:Inner brow raiser",
-        "02:Outer brow raiser",
-        "04:Brow lowerer",
-        "05:Upper lid raiser",
-        "06:Cheek raiser",
-        "07:Lid tighter",
-        "09:Nose wrinkler",
-        "10:Upper lip raiser",
-        "12:Lip corner puller",
-        "14:Dimpler",
-        "15:Lip corner depressor",
-        "17:Chin raiser",
-        "20:Lip stretcher",
-        "23:Lip tightener",
-        "25:Lip part",
-        "26:Jaw drop",
-        "45:Blink",
+        "Confusion",
+        "Drowsiness",
+        "Headnod",
+        "Headshake",
+        "Smile",
+        "Speaking",
       ],
     },
     yAxis: {
       min: 0,
       title: {
-        text: "value",
+        text: "number of people",
       },
       stackLabels: {
         enabled: true,
@@ -195,333 +342,66 @@ function drawFullChart1() {
       },
     },
     legend: {
-      align: "right",
-      x: -100,
-      verticalAlign: "top",
-      y: 20,
-      floating: true,
-      backgroundColor:
-        (Highcharts.theme && Highcharts.theme.legendBackgroundColorSolid) ||
-        "white",
-      borderColor: "#CCC",
-      borderWidth: 1,
-      shadow: false,
+      enabled: false,
+      // align: "right",
+      // x: -100,
+      // verticalAlign: "top",
+      // y: 20,
+      // floating: true,
+      // backgroundColor:
+      //   (Highcharts.theme && Highcharts.theme.legendBackgroundColorSolid) ||
+      //   "white",
+      // borderColor: "#CCC",
+      // borderWidth: 1,
+      // shadow: false,
     },
     tooltip: {
-      formatter: function () {
-        return (
-          "<b>" +
-          this.x +
-          "</b><br/>" +
-          this.series.name +
-          ": " +
-          Math.round(this.y) +
-          "<br/>" +
-          "Total: " +
-          Math.round(this.point.stackTotal)
-        );
-      },
+      enabled: false,
+      // formatter: function () {
+      //   return (
+      //     "<b>" +
+      //     this.x +
+      //     "</b><br/>" +
+      //     this.series.name +
+      //     ": " +
+      //     Math.round(this.y) +
+      //     "<br/>" +
+      //     "Total: " +
+      //     Math.round(this.point.stackTotal)
+      //   );
+      // },
     },
     plotOptions: {
-      column: {
-        stacking: "normal",
+      bar: {
+        // stacking: "normal",
         dataLabels: {
-          enabled: false,
-          color:
-            (Highcharts.theme && Highcharts.theme.dataLabelsColor) || "white",
+          enabled: true,
+          // color:
+          //   (Highcharts.theme && Highcharts.theme.dataLabelsColor) || "white",
         },
       },
     },
     series: [
       {
-        name: "Facial expression itensity",
-        data: [5, 3, 4, 7, 2],
+        name: "",
+        data: [5, 3, 4, 7, 2, 9],
       },
     ],
   });
 }
 
 function drawFullChart2() {
-  // categories
-  var categories = ["whether in/out of slides", "whether in/out of screen"];
+  var startTime = new Date().getTime();
   fullChart2 = Highcharts.chart("fullchart2", {
     credits: false,
     chart: {
-      type: "bar",
-      events: {
-        load: function () {
-          // set up the updating of the chart each second
-          var series = this.series[0];
-          // console.log(series);
-          fullinterval2 = setInterval(function () {
-            var data = [];
-            data.push([
-              //   Math.round(Math.random() * 100),
-              Math.round(Math.random() * 100),
-            ]);
-            data.push(["In screen", Math.round(Math.random() * 100)]);
-            series.setData(data);
-          }, 2000);
-        },
-      },
-    },
-    title: {
-      text: "Eye Gaze Focusing",
-    },
-    accessibility: {
-      point: {
-        valueDescriptionFormat: "{index}. {xDescription}, {value}%.",
-      },
-    },
-    xAxis: [
-      {
-        categories: categories,
-        reversed: false,
-        labels: {
-          step: 1,
-        },
-        accessibility: {
-          description: "Age (male)",
-        },
-      },
-      {
-        // mirror axis on right side
-        opposite: true,
-        reversed: false,
-        categories: categories,
-        linkedTo: 0,
-        labels: {
-          step: 1,
-        },
-        accessibility: {
-          description: "Age (female)",
-        },
-      },
-    ],
-    yAxis: {
-      title: {
-        text: null,
-      },
-      labels: {
-        formatter: function () {
-          return Math.abs(this.value) + "%";
-        },
-      },
-      accessibility: {
-        description: "Percentage population",
-        rangeDescription: "Range: 0 to 5%",
-      },
-    },
-
-    plotOptions: {
-      series: {
-        stacking: "normal",
-      },
-    },
-
-    tooltip: {
-      formatter: function () {
-        // console.log(this);
-        return (
-          "<b>" +
-          this.series.name +
-          "</b><br/>" +
-          "Population: " +
-          Highcharts.numberFormat(Math.abs(this.point.y), 1) +
-          "%"
-        );
-      },
-    },
-
-    series: [
-      {
-        name: "In Screen",
-        data: [60, 90],
-      },
-      {
-        name: "Out of Screen",
-        data: [-23, -12],
-      },
-    ],
-  });
-}
-
-function drawFullChart3() {
-  fullChart3 = Highcharts.chart("fullchart3", {
-    credits: false,
-    chart: {
-      type: "spline",
-      animation: Highcharts.svg, // don't animate in old IE
-      marginRight: 10,
-      events: {
-        load: function () {
-          // set up the updating of the chart each second
-          var series = this.series[0];
-          fullinterval3 = setInterval(function () {
-            // var x = new Date().getTime(),
-            //   engagement = 0; // current time
-            // $.ajax({
-            //   url: "http://49.232.60.34:5000/get_class_information",
-            //   type: "GET",
-            //   async: false,
-            //   success: function (res) {
-            //     console.log("getting data from backend");
-            //     data = JSON.parse(res);
-            //     data.forEach((d) => {
-            //       engagement += parseFloat(d.engagement);
-            //     });
-            //     engagement /= data.length;
-            //     console.log("ajax success engagement:", engagement);
-            //     // localStorage.clear();
-            //     var eng_list = localStorage.getItem("engagement");
-            //     var time = new Date().getTime();
-            //     if (eng_list) {
-            //       var eng_list_obj = JSON.parse(eng_list);
-            //       eng_list_obj.push({ time, engagement });
-            //     } else {
-            //       var eng_list_obj = [{ time, engagement }];
-            //     }
-            //     console.log(eng_list_obj);
-            //     eng_list = JSON.stringify(eng_list_obj);
-            //     localStorage.setItem("engagement", eng_list);
-            //     console.log("localstorage:", localStorage);
-            //   },
-            // }).done(function () {
-            //   console.log("ajax done");
-            // });
-            // var eng = doAjax("http://49.232.60.34:5000/get_class_information");
-            // console.log("doajax:", eng);
-            // console.log("engagement:", engagement);
-            // series.addPoint([x, engagement], true, true);
-          }, 1000);
-        },
-      },
-    },
-
-    time: {
-      useUTC: false,
+      type: "area",
+      width: $("#fulldiv2").width() - 40,
+      height: $("#fulldiv2").height() - 40,
     },
 
     title: {
-      text: "Live random data",
-    },
-
-    accessibility: {
-      announceNewData: {
-        enabled: true,
-        minAnnounceInterval: 15000,
-        announcementFormatter: function (allSeries, newSeries, newPoint) {
-          if (newPoint) {
-            return "New point added. Value: " + newPoint.y;
-          }
-          return false;
-        },
-      },
-    },
-
-    xAxis: {
-      type: "datetime",
-      tickPixelInterval: 150,
-    },
-
-    yAxis: {
-      title: {
-        text: "Value",
-      },
-      plotLines: [
-        {
-          value: 0,
-          width: 1,
-          color: "#808080",
-        },
-      ],
-    },
-
-    tooltip: {
-      headerFormat: "<b>{series.name}</b><br/>",
-      pointFormat: "{point.x:%Y-%m-%d %H:%M:%S}<br/>{point.y:.2f}",
-    },
-
-    legend: {
-      enabled: false,
-    },
-
-    exporting: {
-      enabled: false,
-    },
-
-    series: [
-      {
-        name: "Random data",
-        data: (function () {
-          // generate an array of random data
-          var data = [],
-            time = new Date().getTime(),
-            i;
-
-          for (i = -19; i <= 0; i += 1) {
-            data.push({
-              x: time + i * 1000,
-              y: Math.random(),
-            });
-          }
-          return data;
-        })(),
-      },
-    ],
-  });
-
-  setInterval(() => {}, 1000);
-}
-
-function drawLineChart(container) {
-  var startTime = new Date().getTime();
-  function getData(n) {
-    var arr = [],
-      i,
-      x,
-      a,
-      b,
-      c,
-      spike;
-    for (
-      i = 0, x = Date.UTC(new Date().getUTCFullYear(), 0, 1) - n * 36e5;
-      i < n;
-      i = i + 1, x = x + 36e5
-    ) {
-      if (i % 100 === 0) {
-        a = 2 * Math.random();
-      }
-      if (i % 1000 === 0) {
-        b = 2 * Math.random();
-      }
-      if (i % 10000 === 0) {
-        c = 2 * Math.random();
-      }
-      if (i % 50000 === 0) {
-        spike = 10;
-      } else {
-        spike = 0;
-      }
-      arr.push([x, 2 * Math.sin(i / 100) + a + b + c + spike + Math.random()]);
-    }
-    return arr;
-  }
-  var n = 5000,
-    data = getData(n);
-
-  console.log(data);
-
-  console.time("line");
-  fullChart3 = Highcharts.chart(container, {
-    chart: {
-      zoomType: "x",
-      width: $("#fulldiv3").width() - 40,
-      height: $("#fulldiv3").height() - 40,
-    },
-
-    title: {
-      text: "Engagement",
+      text: "Gaze",
     },
 
     subtitle: {
@@ -547,294 +427,149 @@ function drawLineChart(container) {
 
     series: [
       {
-        data: [
-          {
-            x: 1591459200000,
-            y: 9,
-            name: "theme_blue",
-            color: "#00FF00",
-          },
-          {
-            x: 1591462800000,
-            y: 6,
-            name: "theme_orange",
-            color: "#FF00FF",
-          },
-        ],
         lineWidth: 0.5,
         name: "Average level",
       },
     ],
   });
 
-  var i = 1;
-  setInterval(() => {
-    var x = new Date().getTime(),
-      engagement = 0,
-      eng_list_json; // current time
-
-    $.ajax({
-      url: "http://49.232.60.34:5000/get_class_information",
-      type: "GET",
-      async: false,
-      success: function (res) {
-        console.log("getting data from backend");
-        data = JSON.parse(res);
-        data.forEach((d) => {
-          engagement += parseFloat(d.engagement);
-        });
-        engagement /= data.length;
-        // console.log("ajax success engagement:", engagement);
-
-        var eng_list = localStorage.getItem("engagement");
-        eng_list_json = eng_list ? JSON.parse(eng_list) : [];
-        eng_list_json.push([x, engagement]);
-        // console.log(eng_list_json);
-        eng_list = JSON.stringify(eng_list_json);
-        localStorage.setItem("engagement", eng_list);
-        // console.log("localstorage:", localStorage);
-      },
-    }).done(function () {
-      console.log("ajax done");
-    });
-    if (fullChart3) {
-      // fullChart3.series[0].setData(getData(50));
-      console.log(fullChart3.series[0]);
-      fullChart3.series[0].setData(eng_list_json);
+  fullinterval2 = setInterval(function () {
+    if (fullChart2.series) {
+      var list = localStorage.getItem("gaze");
+      var list_json = list ? JSON.parse(list) : [];
+      fullChart2.series[0].setData(list_json);
     }
-    i++;
   }, 1000);
 }
 
-function drawAreaChart(container) {
-  fullChart2 = Highcharts.chart(container, {
+function drawFullChart3() {
+  var startTime = new Date().getTime();
+  var threshold = 0.4;
+  fullChart3 = Highcharts.chart("fullchart3", {
+    credits: false,
     chart: {
       type: "area",
-      width: $("#fulldiv2").width() - 40,
-      height: $("#fulldiv2").height() - 40,
+      width: $("#fulldiv3").width() - 40,
+      height: $("#fulldiv3").height() - 40,
     },
-    accessibility: {
-      description:
-        "Image description: An area chart compares the nuclear stockpiles of the USA and the USSR/Russia between 1945 and 2017. The number of nuclear weapons is plotted on the Y-axis and the years on the X-axis. The chart is interactive, and the year-on-year stockpile levels can be traced for each country. The US has a stockpile of 6 nuclear weapons at the dawn of the nuclear age in 1945. This number has gradually increased to 369 by 1950 when the USSR enters the arms race with 6 weapons. At this point, the US starts to rapidly build its stockpile culminating in 32,040 warheads by 1966 compared to the USSR’s 7,089. From this peak in 1966, the US stockpile gradually decreases as the USSR’s stockpile expands. By 1978 the USSR has closed the nuclear gap at 25,393. The USSR stockpile continues to grow until it reaches a peak of 45,000 in 1986 compared to the US arsenal of 24,401. From 1986, the nuclear stockpiles of both countries start to fall. By 2000, the numbers have fallen to 10,577 and 21,000 for the US and Russia, respectively. The decreases continue until 2017 at which point the US holds 4,018 weapons compared to Russia’s 4,500.",
-    },
+
     title: {
-      text: "US and USSR nuclear stockpiles",
+      text: "Confusion",
     },
+
     subtitle: {
-      text:
-        'Sources: <a href="https://thebulletin.org/2006/july/global-nuclear-stockpiles-1945-2006">' +
-        'thebulletin.org</a> &amp; <a href="https://www.armscontrol.org/factsheets/Nuclearweaponswhohaswhat">' +
-        "armscontrol.org</a>",
+      text: "Historical data (updata per second)",
     },
-    xAxis: {
-      allowDecimals: false,
-      labels: {
-        formatter: function () {
-          return this.value; // clean, unformatted number for year
-        },
-      },
-      accessibility: {
-        rangeDescription: "Range: 1940 to 2017.",
-      },
-    },
-    yAxis: {
-      title: {
-        text: "Nuclear weapon states",
-      },
-      labels: {
-        formatter: function () {
-          return this.value / 1000 + "k";
-        },
-      },
-    },
+
     tooltip: {
-      pointFormat:
-        "{series.name} had stockpiled <b>{point.y:,.0f}</b><br/>warheads in {point.x}",
-    },
-    plotOptions: {
-      area: {
-        pointStart: 1940,
-        marker: {
-          enabled: false,
-          symbol: "circle",
-          radius: 2,
-          states: {
-            hover: {
-              enabled: true,
-            },
-          },
-        },
+      valueDecimals: 2,
+      useHTML: true,
+      formatter: function () {
+        return `<div style="min-height: 120px;">
+        <img src="https://img.webmd.com/dtmcms/live/webmd/consumer_assets/site_images/article_thumbnails/other/dog_cool_summer_slideshow/1800x1200_dog_cool_summer_other.jpg" width="150"/>
+        <br />► ${this.series.name}: ${this.point.y.toFixed(2)}<br /></div>`;
       },
     },
+
+    xAxis: {
+      type: "datetime",
+      tickInterval: 10,
+      min: startTime,
+      // min: 1625842192120,
+    },
+
     series: [
       {
-        name: "USA",
-        data: [
-          null,
-          null,
-          null,
-          null,
-          null,
-          6,
-          11,
-          32,
-          110,
-          235,
-          369,
-          640,
-          1005,
-          1436,
-          2063,
-          3057,
-          4618,
-          6444,
-          9822,
-          15468,
-          20434,
-          24126,
-          27387,
-          29459,
-          31056,
-          31982,
-          32040,
-          31233,
-          29224,
-          27342,
-          26662,
-          26956,
-          27912,
-          28999,
-          28965,
-          27826,
-          25579,
-          25722,
-          24826,
-          24605,
-          24304,
-          23464,
-          23708,
-          24099,
-          24357,
-          24237,
-          24401,
-          24344,
-          23586,
-          22380,
-          21004,
-          17287,
-          14747,
-          13076,
-          12555,
-          12144,
-          11009,
-          10950,
-          10871,
-          10824,
-          10577,
-          10527,
-          10475,
-          10421,
-          10358,
-          10295,
-          10104,
-          9914,
-          9620,
-          9326,
-          5113,
-          5113,
-          4954,
-          4804,
-          4761,
-          4717,
-          4368,
-          4018,
-        ],
-      },
-      {
-        name: "USSR/Russia",
-        data: [
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          5,
-          25,
-          50,
-          120,
-          150,
-          200,
-          426,
-          660,
-          869,
-          1060,
-          1605,
-          2471,
-          3322,
-          4238,
-          5221,
-          6129,
-          7089,
-          8339,
-          9399,
-          10538,
-          11643,
-          13092,
-          14478,
-          15915,
-          17385,
-          19055,
-          21205,
-          23044,
-          25393,
-          27935,
-          30062,
-          32049,
-          33952,
-          35804,
-          37431,
-          39197,
-          45000,
-          43000,
-          41000,
-          39000,
-          37000,
-          35000,
-          33000,
-          31000,
-          29000,
-          27000,
-          25000,
-          24000,
-          23000,
-          22000,
-          21000,
-          20000,
-          19000,
-          18000,
-          18000,
-          17000,
-          16000,
-          15537,
-          14162,
-          12787,
-          12600,
-          11400,
-          5500,
-          4512,
-          4502,
-          4502,
-          4500,
-          4500,
-        ],
+        lineWidth: 0.5,
+        name: "Average level",
       },
     ],
   });
+
+  fullinterval3 = setInterval(function () {
+    if (fullChart3.series) {
+      var list = localStorage.getItem("confusion");
+      var list_json = list ? JSON.parse(list) : [];
+      newdata = list_json.map((d) => [d[0], d[1] - threshold]);
+      fullChart3.series[0].setData(newdata);
+    }
+  }, 1000);
+}
+
+function drawFullChart4() {
+  var startTime = new Date().getTime();
+  fullChart4 = Highcharts.chart("fullchart4", {
+    credits: false,
+    chart: {
+      // type: "area",
+      width: $("#fulldiv4").width() - 40,
+      height: $("#fulldiv4").height() - 40,
+    },
+
+    title: {
+      text: "Attention",
+    },
+
+    subtitle: {
+      text: "Historical data (updata per second)",
+    },
+
+    tooltip: {
+      // valueDecimals: 2,
+      // useHTML: true,
+      // formatter: function () {
+      //   return `<div style="min-height: 120px;">
+      //   <img src="https://img.webmd.com/dtmcms/live/webmd/consumer_assets/site_images/article_thumbnails/other/dog_cool_summer_slideshow/1800x1200_dog_cool_summer_other.jpg" width="150"/>
+      //   <br />► ${this.series.name}: ${this.point.y.toFixed(2)}<br /></div>`;
+      // },
+      crosshairs: true,
+      shared: true,
+    },
+
+    xAxis: {
+      type: "datetime",
+      tickInterval: 10,
+      min: startTime,
+      // min: 1625842192120,
+    },
+
+    series: [
+      {
+        name: "Attention",
+        data: [],
+        zIndex: 1,
+        marker: {
+          fillColor: "white",
+          lineWidth: 2,
+          lineColor: Highcharts.getOptions().colors[0],
+        },
+      },
+      {
+        name: "Range",
+        data: [],
+        type: "arearange",
+        lineWidth: 0,
+        linkedTo: ":previous",
+        color: Highcharts.getOptions().colors[0],
+        fillOpacity: 0.3,
+        zIndex: 0,
+        marker: {
+          enabled: false,
+        },
+      },
+    ],
+  });
+
+  fullinterval4 = setInterval(function () {
+    if (fullChart4.series) {
+      var list = localStorage.getItem("engagement");
+      var list_json = list ? JSON.parse(list) : [];
+      fullChart4.series[0].setData(list_json);
+      var range_list = localStorage.getItem("eng_range");
+      var range_list_json = range_list ? JSON.parse(range_list) : [];
+      fullChart4.series[1].setData(range_list_json);
+    }
+  }, 1000);
 }
 
 const containers = ["fullchart1", "fullchart2", "fullchart3"];
@@ -918,3 +653,236 @@ function handleDisplayFull(id) {
     grid.removeWidget(el);
   }
 }
+
+// function drawFullChart2() {
+//   // categories
+//   var categories = ["whether in/out of slides", "whether in/out of screen"];
+//   fullChart2 = Highcharts.chart("fullchart2", {
+//     credits: false,
+//     chart: {
+//       type: "bar",
+//       events: {
+//         load: function () {
+//           // set up the updating of the chart each second
+//           var series = this.series[0];
+//           // console.log(series);
+//           fullinterval2 = setInterval(function () {
+//             var data = [];
+//             data.push([
+//               //   Math.round(Math.random() * 100),
+//               Math.round(Math.random() * 100),
+//             ]);
+//             data.push(["In screen", Math.round(Math.random() * 100)]);
+//             series.setData(data);
+//           }, 2000);
+//         },
+//       },
+//     },
+//     title: {
+//       text: "Eye Gaze Focusing",
+//     },
+//     accessibility: {
+//       point: {
+//         valueDescriptionFormat: "{index}. {xDescription}, {value}%.",
+//       },
+//     },
+//     xAxis: [
+//       {
+//         categories: categories,
+//         reversed: false,
+//         labels: {
+//           step: 1,
+//         },
+//         accessibility: {
+//           description: "Age (male)",
+//         },
+//       },
+//       {
+//         // mirror axis on right side
+//         opposite: true,
+//         reversed: false,
+//         categories: categories,
+//         linkedTo: 0,
+//         labels: {
+//           step: 1,
+//         },
+//         accessibility: {
+//           description: "Age (female)",
+//         },
+//       },
+//     ],
+//     yAxis: {
+//       title: {
+//         text: null,
+//       },
+//       labels: {
+//         formatter: function () {
+//           return Math.abs(this.value) + "%";
+//         },
+//       },
+//       accessibility: {
+//         description: "Percentage population",
+//         rangeDescription: "Range: 0 to 5%",
+//       },
+//     },
+
+//     plotOptions: {
+//       series: {
+//         stacking: "normal",
+//       },
+//     },
+
+//     tooltip: {
+//       formatter: function () {
+//         // console.log(this);
+//         return (
+//           "<b>" +
+//           this.series.name +
+//           "</b><br/>" +
+//           "Population: " +
+//           Highcharts.numberFormat(Math.abs(this.point.y), 1) +
+//           "%"
+//         );
+//       },
+//     },
+
+//     series: [
+//       {
+//         name: "In Screen",
+//         data: [60, 90],
+//       },
+//       {
+//         name: "Out of Screen",
+//         data: [-23, -12],
+//       },
+//     ],
+//   });
+// }
+
+// function drawFullChart3() {
+//   fullChart3 = Highcharts.chart("fullchart3", {
+//     credits: false,
+//     chart: {
+//       type: "spline",
+//       animation: Highcharts.svg, // don't animate in old IE
+//       marginRight: 10,
+//       events: {
+//         load: function () {
+//           // set up the updating of the chart each second
+//           var series = this.series[0];
+//           fullinterval3 = setInterval(function () {
+//             // var x = new Date().getTime(),
+//             //   engagement = 0; // current time
+//             // $.ajax({
+//             //   url: "http://49.232.60.34:5000/get_class_information",
+//             //   type: "GET",
+//             //   async: false,
+//             //   success: function (res) {
+//             //     console.log("getting data from backend");
+//             //     data = JSON.parse(res);
+//             //     data.forEach((d) => {
+//             //       engagement += parseFloat(d.engagement);
+//             //     });
+//             //     engagement /= data.length;
+//             //     console.log("ajax success engagement:", engagement);
+//             //     // localStorage.clear();
+//             //     var eng_list = localStorage.getItem("engagement");
+//             //     var time = new Date().getTime();
+//             //     if (eng_list) {
+//             //       var eng_list_obj = JSON.parse(eng_list);
+//             //       eng_list_obj.push({ time, engagement });
+//             //     } else {
+//             //       var eng_list_obj = [{ time, engagement }];
+//             //     }
+//             //     console.log(eng_list_obj);
+//             //     eng_list = JSON.stringify(eng_list_obj);
+//             //     localStorage.setItem("engagement", eng_list);
+//             //     console.log("localstorage:", localStorage);
+//             //   },
+//             // }).done(function () {
+//             //   console.log("ajax done");
+//             // });
+//             // var eng = doAjax("http://49.232.60.34:5000/get_class_information");
+//             // console.log("doajax:", eng);
+//             // console.log("engagement:", engagement);
+//             // series.addPoint([x, engagement], true, true);
+//           }, 1000);
+//         },
+//       },
+//     },
+
+//     time: {
+//       useUTC: false,
+//     },
+
+//     title: {
+//       text: "Live random data",
+//     },
+
+//     accessibility: {
+//       announceNewData: {
+//         enabled: true,
+//         minAnnounceInterval: 15000,
+//         announcementFormatter: function (allSeries, newSeries, newPoint) {
+//           if (newPoint) {
+//             return "New point added. Value: " + newPoint.y;
+//           }
+//           return false;
+//         },
+//       },
+//     },
+
+//     xAxis: {
+//       type: "datetime",
+//       tickPixelInterval: 150,
+//     },
+
+//     yAxis: {
+//       title: {
+//         text: "Value",
+//       },
+//       plotLines: [
+//         {
+//           value: 0,
+//           width: 1,
+//           color: "#808080",
+//         },
+//       ],
+//     },
+
+//     tooltip: {
+//       headerFormat: "<b>{series.name}</b><br/>",
+//       pointFormat: "{point.x:%Y-%m-%d %H:%M:%S}<br/>{point.y:.2f}",
+//     },
+
+//     legend: {
+//       enabled: false,
+//     },
+
+//     exporting: {
+//       enabled: false,
+//     },
+
+//     series: [
+//       {
+//         name: "Random data",
+//         data: (function () {
+//           // generate an array of random data
+//           var data = [],
+//             time = new Date().getTime(),
+//             i;
+
+//           for (i = -19; i <= 0; i += 1) {
+//             data.push({
+//               x: time + i * 1000,
+//               y: Math.random(),
+//             });
+//           }
+//           return data;
+//         })(),
+//       },
+//     ],
+//   });
+
+//   setInterval(() => {}, 1000);
+// }
