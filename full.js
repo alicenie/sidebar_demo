@@ -911,7 +911,7 @@ function drawFullChart7() {
     // });
     points = current_heatpos.map((d) => {
       x = ((d[0] + 1) / 2) * 300;
-      y = ((d[1] + 1) / 2) * 300;
+      y = ((-d[1] + 1) / 2) * 300;
       return { x, y, value: 10 };
     });
 

@@ -96,7 +96,7 @@
 
             <div class='row m-2'>
                 <div class="col-2">
-                    <p style="font-size: large;">Concentration:</p>
+                    <p style="font-size: large;">Engagement:</p>
                 </div>
                 <div class="btn-group col-6" role="group" aria-label="Basic radio toggle button group"
                     onchange="handleRadioChange()">
@@ -111,6 +111,11 @@
                     <input type="radio" class="btn-check" name="concenradio" id="concenradio3" value="Bar"
                         autocomplete="off">
                     <label class="btn btn-outline-primary" for="concenradio3">Bar</label>
+                </div>
+                <div class="col-2">
+                    <input type="range" class="form-range" min="0" max="100" value="50" id="engthresh"
+                        style="width:5rem" onchange="handleChartThresholdChange('engthresh')">
+                    <label id="engthreshtext" for="engthresh" class="form-label">> 0.50</label>
                 </div>
             </div>
 
@@ -132,6 +137,11 @@
                         autocomplete="off">
                     <label class="btn btn-outline-primary" for="confusedradio3">Bar</label>
                 </div>
+                <div class="col-2">
+                    <input type="range" class="form-range" min="0" max="100" value="50" id="conthresh"
+                        style="width:5rem" onchange="handleChartThresholdChange('conthresh')">
+                    <label id="conthreshtext" for="conthresh" class="form-label">> 0.50</label>
+                </div>
             </div>
 
             <div class='row m-2'>
@@ -151,6 +161,12 @@
                     <input type="radio" class="btn-check" name="gazeradio" id="gazeradio3" value="Bar"
                         autocomplete="off">
                     <label class="btn btn-outline-primary" for="gazeradio3">Bar</label>
+                </div>
+                <div class="col-2">
+                    <input type="range" class="form-range" min="0" max="100" value="50" id="gazethresh"
+                        style="width:5rem" onchange="handleChartThresholdChange('gazethresh')">
+                    <label id="gazethreshtext" for="gazethresh" class="form-label">> 0.50</label>
+
                 </div>
             </div>
 

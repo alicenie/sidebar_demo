@@ -130,6 +130,34 @@ function loadWindow() {
   });
   $("input[name='themeradio'][value=" + themeid + "]").prop("checked", true);
 
+  // update threshold
+  var gazeThresh,
+    gazeThreshName = "gazethresh";
+  cookieList.forEach((val) => {
+    if (val.indexOf(gazeThreshName) === 0)
+      gazeThresh = val.substring(gazeThreshName.length + 1);
+  });
+  $("#" + gazeThreshName).attr("value", gazeThresh);
+  $(`#${gazeThreshName}text`).html("> 0." + gazeThresh);
+
+  var conThresh,
+    conThreshName = "conthresh";
+  cookieList.forEach((val) => {
+    if (val.indexOf(conThreshName) === 0)
+      conThresh = val.substring(conThreshName.length + 1);
+  });
+  $("#" + conThreshName).attr("value", conThresh);
+  $(`#${conThreshName}text`).html("> 0." + conThresh);
+
+  var engThresh,
+    engThreshName = "engthresh";
+  cookieList.forEach((val) => {
+    if (val.indexOf(engThreshName) === 0)
+      engThresh = val.substring(engThreshName.length + 1);
+  });
+  $("#" + engThreshName).attr("value", engThresh);
+  $(`#${engThreshName}text`).html("> 0." + engThresh);
+
   // initial store in cookies when first load
   if (!gazeChartType) {
     gazeChartType = $("input[name='gazeradio']:checked").val();
@@ -188,4 +216,10 @@ function handleThemeChange() {
   themeid = $("input[name='themeradio']:checked").val();
   console.log("themeradio:", $("input[name='themeradio']:checked"));
   document.cookie = "themeid=" + themeid;
+}
+
+function handleChartThresholdChange(id) {
+  const threshold = $("#" + id)[0].value;
+  $(`#${id}text`).html("> 0." + threshold);
+  document.cookie = id + "=" + threshold;
 }

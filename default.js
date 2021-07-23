@@ -26,11 +26,16 @@ var radialInterval1,
   default2 = 0,
   default3 = 0,
   default4 = 0,
+  threshold_value = {
+    confusion: 0.5,
+    engagement: 0.5,
+    gaze: 0.5,
+  },
   chartData = {
     confusion: 0,
     engagement: 0,
     gaze: 0,
-    emotion: 0,
+    // emotion: 0,
   },
   emojiData = {
     total_ppl: 0,
@@ -47,6 +52,12 @@ const correspond_name = {
   Engagement: "engagement",
   Gaze: "gaze",
   Emotion: "emotion",
+};
+
+const chart_name = {
+  confusion: "defaultchart2",
+  engagement: "defaultchart3",
+  gaze: "defaultchart1",
 };
 
 const themes = {
@@ -95,7 +106,7 @@ const themes = {
   },
 };
 
-function getServerData() {
+function getServerData(theme) {
   // get data from backend
   $.ajax({
     url: "http://49.232.60.34:5000/get_class_information",
@@ -134,36 +145,54 @@ function getServerData() {
       // get chart data
       Object.keys(chartData).forEach((name) => {
         var norm_data = 0;
-        if (name == "emotion") {
-          var x = [],
-            y = [];
-          live_data.forEach((d) => {
-            norm_data += parseFloat(d[name].split(" ")[0]);
-            x.push(parseFloat(d[name].split(" ")[0]));
-            y.push(parseFloat(d[name].split(" ")[1]));
-          });
-          emotion = { x, y };
-          norm_data /= live_data.length;
-          norm_data = (norm_data + 1) / 2;
-        } else {
-          live_data.forEach((d) => {
-            // console.log(parseFloat(d[name]));
-            norm_data += parseFloat(d[name]);
-          });
-          norm_data /= live_data.length;
-        }
 
-        console.log(name, norm_data);
+        live_data.forEach((d) => {
+          // console.log(parseFloat(d[name]));
+          norm_data += parseFloat(d[name]);
+        });
+        norm_data /= live_data.length;
+
+        // console.log(name, norm_data);
         chartData[name] = norm_data;
       });
       console.log("getServerData chartData", chartData);
       // console.log("normalized data:", norm_data);
+
+      var name = "emotion";
+      var x = [],
+        y = [];
+      live_data.forEach((d) => {
+        x.push(parseFloat(d[name].split(" ")[0]));
+        y.push(parseFloat(d[name].split(" ")[1]));
+      });
+      console.log("emotion", emotion);
+      emotion = { x, y };
+
+      checkAlert(theme);
     },
   });
 }
 
+function checkAlert(theme) {
+  for (const [key, value] of Object.entries(chartData)) {
+    if (value > threshold_value[key]) {
+      console.log(key, "value: ", value);
+      console.log("thresh: ", threshold_value[key]);
+      $("#" + chart_name[key]).css("border-width", "5");
+      $("#" + chart_name[key]).css("border-color", "orange");
+      var audio = new Audio("ding.wav");
+      audio.play();
+    } else {
+      $("#" + chart_name[key]).css("border-width", "3");
+      $("#" + chart_name[key]).css(
+        "border-color",
+        `rgb(${theme.default[chart_name[key]]})`
+      );
+    }
+  }
+}
+
 function loadDefaultWindow() {
-  setInterval(getServerData, 1000);
   setInterval(create_emotion_wheel, 1000);
   // get the chart type
   var cookieList = document.cookie.split("; ");
@@ -201,6 +230,36 @@ function loadDefaultWindow() {
   });
   console.log("emo:", emoChartType);
 
+  // get threshold
+  var gazeThresh,
+    gazeThreshName = "gazethresh";
+  cookieList.forEach((val) => {
+    if (val.indexOf(gazeThreshName) === 0)
+      gazeThresh = val.substring(gazeThreshName.length + 1);
+  });
+  console.log("gaze thresh:", gazeThresh);
+
+  var conThresh,
+    conThreshName = "conthresh";
+  cookieList.forEach((val) => {
+    if (val.indexOf(conThreshName) === 0)
+      conThresh = val.substring(conThreshName.length + 1);
+  });
+  console.log("con thresh:", conThresh);
+
+  var engThresh,
+    engThreshName = "engthresh";
+  cookieList.forEach((val) => {
+    if (val.indexOf(engThreshName) === 0)
+      engThresh = val.substring(engThreshName.length + 1);
+  });
+  console.log("eng thresh:", engThresh);
+  threshold_value = {
+    confusion: conThresh / 100,
+    gaze: gazeThresh / 100,
+    engagement: engThresh / 100,
+  };
+
   // get theme
   var themeid,
     themeName = "themeid";
@@ -218,6 +277,9 @@ function loadDefaultWindow() {
     $(`#${key}Check`).css("background-color", `rgba(${value},0.5)`);
     // $(`#${key}Check`).css("opacity", 0.5);
   }
+
+  setInterval(getServerData, 1000, theme);
+  // setInterval(checkAlert, 5000, theme);
 
   // make it sortable
   // $("#draggable").draggable();
@@ -625,6 +687,10 @@ function drawMotorChart(container, name, theme) {
       if (newVal < 0 || newVal > 200) {
         newVal = point.y - inc;
       }
+      // console.log("chart value", chartData[correspond_name[name]]);
+      // console.log("inc", inc);
+      // console.log("point", point);
+      // console.log("newVal", newVal);
 
       point.update(newVal);
     }
