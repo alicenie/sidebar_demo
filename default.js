@@ -45,7 +45,10 @@ var radialInterval1,
   emotion = {
     x: [],
     y: [],
-  };
+  },
+  alertBorder = true,
+  alertIcon = true,
+  alertSound = true;
 
 const correspond_name = {
   Confused: "confusion",
@@ -178,10 +181,34 @@ function checkAlert(theme) {
     if (value > threshold_value[key]) {
       console.log(key, "value: ", value);
       console.log("thresh: ", threshold_value[key]);
-      $("#" + chart_name[key]).css("border-width", "5");
-      $("#" + chart_name[key]).css("border-color", "orange");
-      var audio = new Audio("ding.wav");
-      audio.play();
+      if (alertBorder) {
+        // shine for 3 times
+        var x = 0;
+        var borderInterval = setInterval(function () {
+          if (++x === 3) clearInterval(borderInterval);
+          $("#" + chart_name[key]).css("border-width", "5");
+          $("#" + chart_name[key]).css("border-color", "orange");
+          setTimeout(function () {
+            $("#" + chart_name[key]).css("border-width", "3");
+            $("#" + chart_name[key]).css(
+              "border-color",
+              `rgb(${theme.default[chart_name[key]]})`
+            );
+          }, 250);
+        }, 500);
+      }
+
+      if (alertSound) {
+        var audio = new Audio("ding.wav");
+        audio.play();
+      }
+
+      if (alertIcon) {
+        // console.log($("image"));
+        // $("image").css("color", "red");
+        // console.log(d3.select("image"));
+        // d3.selectAll("image").style("filter", "invert(100%)");
+      }
     } else {
       $("#" + chart_name[key]).css("border-width", "3");
       $("#" + chart_name[key]).css(
@@ -542,7 +569,7 @@ function drawRadialChart(container, name, theme) {
     }
   }, 1000);
 
-  // return radialInterval;
+  return radialInterval;
 }
 
 function drawMotorChart(container, name, theme) {

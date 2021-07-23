@@ -49,3 +49,12 @@ p.trigger-text {
 /* #heatmap_container {
   background-image: url("./emo_heatmap.png");
 } */
+#full-threshold3,
+#full-threshold5,
+#full-threshold7 {
+  height: 10px;
+}
+
+.dropdown-item {
+  align-items: center;
+}

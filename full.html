@@ -134,36 +134,114 @@
                         </a>
                     </li>
                     <li>
-                        <a class="dropdown-item" id="fullchart2Check" onmouseover="handleHighlight('fullchart2')"
-                            onmouseleave="handleUndoHighlight('fullchart2')">
-                            <div class="dropdown-option">
+                        <a class="dropdown-item" id="fullchart2Check" style="padding-top: 10px;">
+                            Gaze:
+                            <div class="dropdown-option" onmouseover="handleHighlight('fullchart2')"
+                                onmouseleave="handleUndoHighlight('fullchart2')">
                                 <div class="form-check">
                                     <input class="form-check-input" type="checkbox" id="fullcheck2" checked
                                         onchange="handleDisplayFull(2)">
-                                    <label class="form-check-label" for="fullcheck2">Gaze</label>
+                                    <label class="form-check-label" for="fullcheck2">area</label>
+                                </div>
+                            </div>
+                            <div class="dropdown-option" onmouseover="handleHighlight('fullchart3')"
+                                onmouseleave="handleUndoHighlight('fullchart3')">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="fullcheck3"
+                                        onchange="handleDisplayFull(3)">
+                                    <label class="form-check-label" for="fullcheck3">thres</label>
+                                    <input type="range" class="form-range" min="0" max="10" value="4"
+                                        id="full-threshold3" style="width:3rem"
+                                        onchange="handleFullThresholdChange('3')">
+                                    <label id="full-threshold3-text" for="full-threshold3" class="form-label">>
+                                        0.4</label>
                                 </div>
                             </div>
                         </a>
                     </li>
                     <li>
-                        <a class="dropdown-item" id="fullchart3Check" onmouseover="handleHighlight('fullchart3')"
-                            onmouseleave="handleUndoHighlight('fullchart3')">
-                            <div class="dropdown-option">
+                        <a class="dropdown-item" id="fullchart3Check">
+                            Confusion:
+                            <div class="dropdown-option" onmouseover="handleHighlight('fullchart4')"
+                                onmouseleave="handleUndoHighlight('fullchart4')">
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="fullcheck3" checked
-                                        onchange="handleDisplayFull(3)">
-                                    <label class="form-check-label" for="fullcheck3">Confusion</label>
+                                    <input class="form-check-input" type="checkbox" id="fullcheck4"
+                                        onchange="handleDisplayFull(4)">
+                                    <label class="form-check-label" for="fullcheck4">area</label>
+                                </div>
+                            </div>
+                            <div class="dropdown-option" onmouseover="handleHighlight('fullchart5')"
+                                onmouseleave="handleUndoHighlight('fullchart5')">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="fullcheck5" checked
+                                        onchange="handleDisplayFull(5)">
+                                    <label class="form-check-label" for="fullcheck5">thres</label>
+                                    <input type="range" class="form-range" min="0" max="10" value="4"
+                                        id="full-threshold5" style="width:3rem"
+                                        onchange="handleFullThresholdChange('5')">
+                                    <label id="full-threshold5-text" for="full-threshold5" class="form-label">>
+                                        0.4</label>
                                 </div>
                             </div>
                         </a>
                     </li>
-                    <li><a class="dropdown-item" id="fullchart4Check" onmouseover="handleHighlight('fullchart4')"
-                            onmouseleave="handleUndoHighlight('fullchart4')">
-                            <div class="dropdown-option">
+                    <li><a class="dropdown-item" id="fullchart4Check">
+                            Engagement:
+                            <div class="dropdown-option" onmouseover="handleHighlight('fullchart6')"
+                                onmouseleave="handleUndoHighlight('fullchart6')">
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="fullcheck4" checked
-                                        onchange="handleDisplayFull(4)">
-                                    <label class="form-check-label" for="fullccheck4">Engagement</label>
+                                    <input class="form-check-input" type="checkbox" id="fullcheck6"
+                                        onchange="handleDisplayFull(6)">
+                                    <label class="form-check-label" for="fullcheck6">area</label>
+                                </div>
+                            </div>
+                            <div class="dropdown-option" onmouseover="handleHighlight('fullchart7')"
+                                onmouseleave="handleUndoHighlight('fullchart7')">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="fullcheck7"
+                                        onchange="handleDisplayFull(7)">
+                                    <label class="form-check-label" for="fullcheck7">thres</label>
+                                    <input type="range" class="form-range" min="0" max="10" value="4"
+                                        id="full-threshold7" style="width:3rem"
+                                        onchange="handleFullThresholdChange('7')">
+                                    <label id="full-threshold7-text" for="full-threshold7" class="form-label">>
+                                        0.4</label>
+                                </div>
+                            </div>
+                            <div class="dropdown-option" onmouseover="handleHighlight('fullchart8')"
+                                onmouseleave="handleUndoHighlight('fullchart8')">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="fullcheck8" checked
+                                        onchange="handleDisplayFull(8)">
+                                    <label class="form-check-label" for="fullcheck8">border</label>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li><a class="dropdown-item">
+                            Emotion:
+                            <div class="dropdown-option" onmouseover="handleHighlight('fullchart9')"
+                                onmouseleave="handleUndoHighlight('fullchart9')">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="fullcheck9"
+                                        onchange="handleDisplayFull(9)">
+                                    <label class="form-check-label" for="fullcheck9">area</label>
+                                </div>
+                            </div>
+                            <div class="dropdown-option" onmouseover="handleHighlight('fullchart10')"
+                                onmouseleave="handleUndoHighlight('fullchart10')">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="fullcheck10"
+                                        onchange="handleDisplayFull(10)">
+                                    <label class="form-check-label" for="fullcheck10">line</label>
+                                </div>
+                            </div>
+                            <div class="dropdown-option" onmouseover="handleHighlight('fullchart11')"
+                                onmouseleave="handleUndoHighlight('fullchart11')">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="fullcheck11" checked
+                                        onchange="handleDisplayFull(11)">
+                                    <label class="form-check-label" for="fullcheck11">heat</label>
                                 </div>
                             </div>
                         </a>
@@ -197,46 +275,82 @@
                 </div>
             </div>
 
-            <div class="grid-stack-item" id="grid-stack-item-3" gs-w="5" gs-h="4">
+            <div class="grid-stack-item" id="grid-stack-item-3" gs-w="5" gs-h="3">
                 <div class="grid-stack-item-content" id="fulldiv3">
-                    <!-- full 3 confusion area chart with negative value-->
-                    <div class="card" id="fullchart3"
-                        style=" margin:5px 0px 5px 0px; padding: 15px; border-width: 2px;">
+                    <!-- full 3 gaze area chart with negative value -->
+                    <div class="card" id="fullchart3" style="margin:5px 0px 5px 0px; padding: 15px; border-width: 2px;">
                     </div>
                 </div>
             </div>
 
-            <div class="grid-stack-item" id="grid-stack-item-4" gs-w="5" gs-h="4">
+
+            <div class="grid-stack-item" id="grid-stack-item-4" gs-w="5" gs-h="3">
                 <div class="grid-stack-item-content" id="fulldiv4">
-                    <!-- full 4 attention area chart with range-->
+                    <!-- full 4 confusion area chart -->
                     <div class="card" id="fullchart4"
                         style=" margin:5px 0px 5px 0px; padding: 15px; border-width: 2px;">
                     </div>
                 </div>
             </div>
 
-            <div class="grid-stack-item" id="grid-stack-item-5" gs-w="5" gs-h="4">
+            <div class="grid-stack-item" id="grid-stack-item-5" gs-w="5" gs-h="3">
                 <div class="grid-stack-item-content" id="fulldiv5">
-                    <!-- full 5 emotion percentage area chart-->
+                    <!-- full 5 confusion area chart with negative value-->
                     <div class="card" id="fullchart5"
                         style=" margin:5px 0px 5px 0px; padding: 15px; border-width: 2px;">
                     </div>
                 </div>
             </div>
 
-            <div class="grid-stack-item" id="grid-stack-item-6" gs-w="5" gs-h="4">
+            <div class="grid-stack-item" id="grid-stack-item-6" gs-w="5" gs-h="3">
                 <div class="grid-stack-item-content" id="fulldiv6">
-                    <!-- full 6 emotion valence and arousal line chart-->
+                    <!-- full 6 engagement area chart -->
                     <div class="card" id="fullchart6"
                         style=" margin:5px 0px 5px 0px; padding: 15px; border-width: 2px;">
                     </div>
                 </div>
             </div>
 
-            <div class="grid-stack-item" id="grid-stack-item-7" gs-w="5" gs-h="4">
+            <div class="grid-stack-item" id="grid-stack-item-7" gs-w="5" gs-h="3">
                 <div class="grid-stack-item-content" id="fulldiv7">
-                    <!-- full 7 emotion heatmap-->
+                    <!-- full 7 engagement area chart with negative value-->
                     <div class="card" id="fullchart7"
+                        style=" margin:5px 0px 5px 0px; padding: 15px; border-width: 2px;">
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-stack-item" id="grid-stack-item-8" gs-w="5" gs-h="3">
+                <div class="grid-stack-item-content" id="fulldiv8">
+                    <!-- full 8 engagement area chart with range-->
+                    <div class="card" id="fullchart8"
+                        style=" margin:5px 0px 5px 0px; padding: 15px; border-width: 2px;">
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-stack-item" id="grid-stack-item-9" gs-w="5" gs-h="3">
+                <div class="grid-stack-item-content" id="fulldiv9">
+                    <!-- full 9 emotion percentage area chart-->
+                    <div class="card" id="fullchart9"
+                        style=" margin:5px 0px 5px 0px; padding: 15px; border-width: 2px;">
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-stack-item" id="grid-stack-item-10" gs-w="5" gs-h="3">
+                <div class="grid-stack-item-content" id="fulldiv10">
+                    <!-- full 10 emotion valence and arousal line chart-->
+                    <div class="card" id="fullchart10"
+                        style=" margin:5px 0px 5px 0px; padding: 15px; border-width: 2px;">
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-stack-item" id="grid-stack-item-11" gs-w="4" gs-h="4">
+                <div class="grid-stack-item-content" id="fulldiv11">
+                    <!-- full 11 emotion heatmap-->
+                    <div class="card" id="fullchart11"
                         style="justify-items: center; align-items:center;  margin:5px 0px 5px 0px; padding: 15px; border-width: 2px;">
                         <p id="heatmap_title" style="font-size: 17px; text-align: center; padding: 5px;">Emotion Heatmap
                         </p>

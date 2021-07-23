@@ -19,7 +19,8 @@ var fullinterval0,
     gaze: 0,
   },
   slide_range = [],
-  current_heatpos = [];
+  current_heatpos = [],
+  start_time;
 // current stage info don't need to be stored in local storage, can be directly sent to chart
 // average of historical data can be calculated each time in drawRadarChart through local storage
 
@@ -138,98 +139,96 @@ function getServerData() {
 
 function loadFullWindow() {
   setInterval(getServerData, 1000);
+  start_time = new Date().getTime();
 
   let grid = GridStack.init({
     cellHeight: 100,
   });
 
   setInterval(function () {
-    $("#fullchart0").width($("#fulldiv0").width() - 40);
-    $("#fullchart0").height($("#fulldiv0").height() - 40);
+    [...Array(11).keys()].forEach((d, i) => {
+      $(`#fullchart${i}`).width($(`#fulldiv${i}`).width() - 40);
+      $(`#fullchart${i}`).height($(`#fulldiv${i}`).height() - 40);
+    });
 
-    $("#fullchart1").width($("#fulldiv1").width() - 40);
-    $("#fullchart1").height($("#fulldiv1").height() - 40);
-
-    $("#fullchart2").width($("#fulldiv2").width() - 40);
-    $("#fullchart2").height($("#fulldiv2").height() - 40);
-
-    $("#fullchart3").width($("#fulldiv3").width() - 40);
-    $("#fullchart3").height($("#fulldiv3").height() - 40);
-
-    $("#fullchart4").width($("#fulldiv4").width() - 40);
-    $("#fullchart4").height($("#fulldiv4").height() - 40);
-
-    $("#fullchart5").width($("#fulldiv5").width() - 40);
-    $("#fullchart5").height($("#fulldiv5").height() - 40);
-
-    $("#fullchart6").width($("#fulldiv6").width() - 40);
-    $("#fullchart6").height($("#fulldiv6").height() - 40);
-
-    $("#fullchart7").width($("#fulldiv7").width() - 70);
-    $("#fullchart7").height($("#fulldiv7").height() - 40);
-
-    // console.log("fulldiv1 width", $("#fulldiv1").width());
-    // console.log("fulldiv1 height", $("#fulldiv1").height());
-    // console.log("fullchart1 width", $("#fullchart1").width());
-    // console.log("fullchart1 height", $("#fullchart1").height());
+    $("#fullchart11").width($("#fulldiv11").width() - 40);
+    $("#fullchart11").height($("#fulldiv11").height() - 40);
   }, 1000);
 
   grid.on("resize", function (e, items) {
-    $("#fullchart0").width($("#fulldiv0").width() - 40);
-    $("#fullchart0").height($("#fulldiv0").height() - 40);
+    [...Array(11).keys()].forEach((d, i) => {
+      $(`#fullchart${i}`).width($(`#fulldiv${i}`).width() - 40);
+      $(`#fullchart${i}`).height($(`#fulldiv${i}`).height() - 40);
+    });
 
-    $("#fullchart1").width($("#fulldiv1").width() - 40);
-    $("#fullchart1").height($("#fulldiv1").height() - 40);
+    $("#fullchart11").width($("#fulldiv11").width() - 40);
+    $("#fullchart11").height($("#fulldiv11").height() - 40);
 
-    $("#fullchart2").width($("#fulldiv2").width() - 40);
-    $("#fullchart2").height($("#fulldiv2").height() - 40);
+    if (Object.keys(fullChart0).length)
+      fullChart0.setSize(
+        $("#fulldiv0").width() - 40,
+        $("#fulldiv0").height() - 40
+      );
 
-    $("#fullchart3").width($("#fulldiv3").width() - 40);
-    $("#fullchart3").height($("#fulldiv3").height() - 40);
+    if (Object.keys(fullChart1).length)
+      fullChart1.setSize(
+        $("#fulldiv1").width() - 40,
+        $("#fulldiv1").height() - 40
+      );
 
-    $("#fullchart4").width($("#fulldiv4").width() - 40);
-    $("#fullchart4").height($("#fulldiv4").height() - 40);
+    if (Object.keys(fullChart2).length)
+      fullChart2.setSize(
+        $("#fulldiv2").width() - 40,
+        $("#fulldiv2").height() - 40
+      );
 
-    $("#fullchart5").width($("#fulldiv5").width() - 40);
-    $("#fullchart5").height($("#fulldiv5").height() - 40);
+    if (Object.keys(fullChart3).length)
+      fullChart3.setSize(
+        $("#fulldiv3").width() - 40,
+        $("#fulldiv3").height() - 40
+      );
 
-    $("#fullchart6").width($("#fulldiv6").width() - 40);
-    $("#fullchart6").height($("#fulldiv6").height() - 40);
+    if (Object.keys(fullChart4).length)
+      fullChart4.setSize(
+        $("#fulldiv4").width() - 40,
+        $("#fulldiv4").height() - 40
+      );
 
-    $("#fullchart7").width($("#fulldiv7").width() - 70);
-    $("#fullchart7").height($("#fulldiv7").height() - 40);
+    if (Object.keys(fullChart5).length)
+      fullChart5.setSize(
+        $("#fulldiv5").width() - 40,
+        $("#fulldiv5").height() - 40
+      );
 
-    fullChart0.setSize(
-      $("#fulldiv0").width() - 40,
-      $("#fulldiv0").height() - 40
-    );
-    fullChart1.setSize(
-      $("#fulldiv1").width() - 40,
-      $("#fulldiv1").height() - 40
-    );
+    if (Object.keys(fullChart6).length)
+      fullChart6.setSize(
+        $("#fulldiv6").width() - 40,
+        $("#fulldiv6").height() - 40
+      );
 
-    fullChart2.setSize(
-      $("#fullchart2").width() - 40,
-      $("#fullchart2").height() - 40
-    );
-    fullChart3.setSize(
-      $("#fullchart3").width() - 40,
-      $("#fullchart3").height() - 40
-    );
+    if (Object.keys(fullChart7).length)
+      fullChart7.setSize(
+        $("#fulldiv7").width() - 40,
+        $("#fulldiv7").height() - 40
+      );
 
-    fullChart4.setSize(
-      $("#fullchart4").width() - 40,
-      $("#fullchart4").height() - 40
-    );
+    if (Object.keys(fullChart8).length)
+      fullChart8.setSize(
+        $("#fulldiv8").width() - 40,
+        $("#fulldiv8").height() - 40
+      );
 
-    fullChart5.setSize(
-      $("#fullchart5").width() - 40,
-      $("#fullchart5").height() - 40
-    );
-    fullChart6.setSize(
-      $("#fullchart6").width() - 40,
-      $("#fullchart6").height() - 40
-    );
+    if (Object.keys(fullChart9).length)
+      fullChart9.setSize(
+        $("#fulldiv9").width() - 40,
+        $("#fulldiv9").height() - 40
+      );
+
+    if (Object.keys(fullChart1).length0)
+      fullChart10.setSize(
+        $("#fulldiv10").width() - 40,
+        $("#fulldiv10").height() - 40
+      );
   });
 
   // get theme
@@ -271,9 +270,17 @@ function loadFullWindow() {
 
   drawFullChart7();
 
-  // drawLineChart("fullchart3");
+  drawFullChart8();
 
-  // drawAreaChart("fullchart2");
+  drawFullChart9();
+
+  drawFullChart10();
+
+  drawFullChart11();
+
+  // [...Array(11).keys()].forEach((d, i) => {
+  //   handleDisplayFull(d);
+  // });
 }
 
 function handleUnloadFull() {
@@ -461,6 +468,7 @@ function drawFullChart1() {
 }
 
 function drawFullChart2() {
+  // gaze area
   var startTime = new Date().getTime();
   fullChart2 = Highcharts.chart("fullchart2", {
     credits: false,
@@ -487,11 +495,14 @@ function drawFullChart2() {
         <br />► ${this.series.name}: ${this.point.y.toFixed(2)}<br /></div>`;
       },
     },
+    legend: {
+      enabled: false,
+    },
 
     xAxis: {
       type: "datetime",
       // tickInterval: 10,
-      min: startTime,
+      min: start_time,
       tickPixelInterval: 100,
       // tickPositioner: function () {
       //   date = new Date(this.dataMin);
@@ -523,14 +534,101 @@ function drawFullChart2() {
 }
 
 function drawFullChart3() {
-  var startTime = new Date().getTime();
-  var threshold = 0.4;
+  // gaze area neg
   fullChart3 = Highcharts.chart("fullchart3", {
     credits: false,
     chart: {
       type: "area",
       width: $("#fulldiv3").width() - 40,
       height: $("#fulldiv3").height() - 40,
+    },
+
+    title: {
+      text: "Gaze",
+    },
+
+    subtitle: {
+      text: "Historical data (updata per second)",
+    },
+
+    tooltip: {
+      valueDecimals: 2,
+      useHTML: true,
+      formatter: function () {
+        return `<div style="min-height: 120px;">
+        <img src="https://img.webmd.com/dtmcms/live/webmd/consumer_assets/site_images/article_thumbnails/other/dog_cool_summer_slideshow/1800x1200_dog_cool_summer_other.jpg" width="150"/>
+        <br />► ${this.series.name}: ${this.point.y.toFixed(2)}<br /></div>`;
+      },
+    },
+    legend: {
+      enabled: false,
+    },
+
+    xAxis: {
+      type: "datetime",
+      // tickInterval: 10,
+      tickPixelInterval: 100,
+      min: start_time,
+      // min: 1625842192120,
+      plotBands: [
+        {
+          from: start_time,
+          to: start_time + 10000,
+          color: "rgba(68, 170, 213, .2)",
+        },
+        {
+          from: start_time + 20000,
+          to: start_time + 25000,
+          color: "rgba(68, 170, 213, .2)",
+        },
+        {
+          from: start_time + 30000,
+          to: start_time + 40000,
+          color: "rgba(68, 170, 213, .2)",
+        },
+        {
+          from: start_time + 50000,
+          to: start_time + 60000,
+          color: "rgba(68, 170, 213, .2)",
+        },
+      ],
+    },
+
+    plotOptions: {
+      series: {
+        threshold: 0.4,
+      },
+    },
+
+    series: [
+      {
+        lineWidth: 0.5,
+        name: "Average level",
+        // threshold: 0.4,
+      },
+    ],
+  });
+
+  fullinterval3 = setInterval(function () {
+    if (fullChart3.series) {
+      var list = localStorage.getItem("gaze");
+      var list_json = list ? JSON.parse(list) : [];
+      fullChart3.series[0].setData(list_json);
+
+      // fullChart3.xAxis[0].addPlotBand(plotBands[0]);
+    }
+  }, 1000);
+}
+
+function drawFullChart4() {
+  // confusion area
+  var startTime = new Date().getTime();
+  fullChart4 = Highcharts.chart("fullchart4", {
+    credits: false,
+    chart: {
+      type: "area",
+      width: $("#fulldiv4").width() - 40,
+      height: $("#fulldiv4").height() - 40,
     },
 
     title: {
@@ -549,6 +647,78 @@ function drawFullChart3() {
         <img src="https://img.webmd.com/dtmcms/live/webmd/consumer_assets/site_images/article_thumbnails/other/dog_cool_summer_slideshow/1800x1200_dog_cool_summer_other.jpg" width="150"/>
         <br />► ${this.series.name}: ${this.point.y.toFixed(2)}<br /></div>`;
       },
+    },
+
+    legend: {
+      enabled: false,
+    },
+
+    xAxis: {
+      type: "datetime",
+      // tickInterval: 10,
+      min: startTime,
+      tickPixelInterval: 100,
+      // tickPositioner: function () {
+      //   date = new Date(this.dataMin);
+      //   hour = date.getHours().toString();
+      //   min = date.getMinutes().toString();
+      //   time = hour + ":" + min;
+      //   console.log(typeof hour, new Date(this.dataMin).getMinutes());
+
+      //   return ["time", this.dataMax];
+      // },
+      // min: 1625842192120,
+    },
+
+    series: [
+      {
+        lineWidth: 0.5,
+        name: "Average level",
+      },
+    ],
+  });
+
+  fullinterval4 = setInterval(function () {
+    if (fullChart4.series) {
+      var list = localStorage.getItem("confusion");
+      var list_json = list ? JSON.parse(list) : [];
+      fullChart4.series[0].setData(list_json);
+    }
+  }, 1000);
+}
+
+function drawFullChart5() {
+  // confusion area neg
+  var startTime = new Date().getTime();
+  var threshold = 0.4;
+  fullChart5 = Highcharts.chart("fullchart5", {
+    credits: false,
+    chart: {
+      type: "area",
+      width: $("#fulldiv5").width() - 40,
+      height: $("#fulldiv5").height() - 40,
+    },
+
+    title: {
+      text: "Confusion",
+    },
+
+    subtitle: {
+      text: "Historical data (updata per second)",
+    },
+
+    tooltip: {
+      valueDecimals: 2,
+      useHTML: true,
+      formatter: function () {
+        return `<div style="min-height: 120px;">
+        <img src="https://img.webmd.com/dtmcms/live/webmd/consumer_assets/site_images/article_thumbnails/other/dog_cool_summer_slideshow/1800x1200_dog_cool_summer_other.jpg" width="150"/>
+        <br />► ${this.series.name}: ${this.point.y.toFixed(2)}<br /></div>`;
+      },
+    },
+
+    legend: {
+      enabled: false,
     },
 
     xAxis: {
@@ -581,6 +751,12 @@ function drawFullChart3() {
       ],
     },
 
+    plotOptions: {
+      series: {
+        threshold: 0.4,
+      },
+    },
+
     series: [
       {
         lineWidth: 0.5,
@@ -589,26 +765,181 @@ function drawFullChart3() {
     ],
   });
 
-  fullinterval3 = setInterval(function () {
-    if (fullChart3.series) {
+  fullinterval5 = setInterval(function () {
+    if (fullChart5.series) {
       var list = localStorage.getItem("confusion");
       var list_json = list ? JSON.parse(list) : [];
-      newdata = list_json.map((d) => [d[0], d[1] - threshold]);
-      fullChart3.series[0].setData(newdata);
-
-      // fullChart3.xAxis[0].addPlotBand(plotBands[0]);
+      fullChart5.series[0].setData(list_json);
+      // fullChart5.xAxis[0].addPlotBand(plotBands[0]);
     }
   }, 1000);
 }
 
-function drawFullChart4() {
+function drawFullChart6() {
+  // eng area
   var startTime = new Date().getTime();
-  fullChart4 = Highcharts.chart("fullchart4", {
+  fullChart6 = Highcharts.chart("fullchart6", {
+    credits: false,
+    chart: {
+      type: "area",
+      width: $("#fulldiv6").width() - 40,
+      height: $("#fulldiv6").height() - 40,
+    },
+
+    title: {
+      text: "Engagement",
+    },
+
+    subtitle: {
+      text: "Historical data (updata per second)",
+    },
+
+    tooltip: {
+      valueDecimals: 2,
+      useHTML: true,
+      formatter: function () {
+        return `<div style="min-height: 120px;">
+        <img src="https://img.webmd.com/dtmcms/live/webmd/consumer_assets/site_images/article_thumbnails/other/dog_cool_summer_slideshow/1800x1200_dog_cool_summer_other.jpg" width="150"/>
+        <br />► ${this.series.name}: ${this.point.y.toFixed(2)}<br /></div>`;
+      },
+    },
+
+    legend: {
+      enabled: false,
+    },
+
+    xAxis: {
+      type: "datetime",
+      // tickInterval: 10,
+      min: startTime,
+      tickPixelInterval: 100,
+      // tickPositioner: function () {
+      //   date = new Date(this.dataMin);
+      //   hour = date.getHours().toString();
+      //   min = date.getMinutes().toString();
+      //   time = hour + ":" + min;
+      //   console.log(typeof hour, new Date(this.dataMin).getMinutes());
+
+      //   return ["time", this.dataMax];
+      // },
+      // min: 1625842192120,
+    },
+
+    series: [
+      {
+        lineWidth: 0.5,
+        name: "Average level",
+      },
+    ],
+  });
+
+  fullinterval6 = setInterval(function () {
+    if (fullChart6.series) {
+      var list = localStorage.getItem("engagement");
+      var list_json = list ? JSON.parse(list) : [];
+      fullChart6.series[0].setData(list_json);
+    }
+  }, 1000);
+}
+
+function drawFullChart7() {
+  // eng area neg
+  var startTime = new Date().getTime();
+  var threshold = 0.4;
+  fullChart7 = Highcharts.chart("fullchart7", {
+    credits: false,
+    chart: {
+      type: "area",
+      width: $("#fulldiv7").width() - 40,
+      height: $("#fulldiv7").height() - 40,
+    },
+
+    title: {
+      text: "Engagement",
+    },
+
+    subtitle: {
+      text: "Historical data (updata per second)",
+    },
+
+    tooltip: {
+      valueDecimals: 2,
+      useHTML: true,
+      formatter: function () {
+        return `<div style="min-height: 120px;">
+        <img src="https://img.webmd.com/dtmcms/live/webmd/consumer_assets/site_images/article_thumbnails/other/dog_cool_summer_slideshow/1800x1200_dog_cool_summer_other.jpg" width="150"/>
+        <br />► ${this.series.name}: ${this.point.y.toFixed(2)}<br /></div>`;
+      },
+    },
+
+    legend: {
+      enabled: false,
+    },
+
+    xAxis: {
+      type: "datetime",
+      // tickInterval: 10,
+      tickPixelInterval: 100,
+      min: startTime,
+      // min: 1625842192120,
+      plotBands: [
+        {
+          from: startTime,
+          to: startTime + 10000,
+          color: "rgba(68, 170, 213, .2)",
+        },
+        {
+          from: startTime + 20000,
+          to: startTime + 25000,
+          color: "rgba(68, 170, 213, .2)",
+        },
+        {
+          from: startTime + 30000,
+          to: startTime + 40000,
+          color: "rgba(68, 170, 213, .2)",
+        },
+        {
+          from: startTime + 50000,
+          to: startTime + 60000,
+          color: "rgba(68, 170, 213, .2)",
+        },
+      ],
+    },
+
+    plotOptions: {
+      series: {
+        threshold: 0.4,
+      },
+    },
+
+    series: [
+      {
+        lineWidth: 0.5,
+        name: "Average level",
+      },
+    ],
+  });
+
+  fullinterval7 = setInterval(function () {
+    if (fullChart7.series) {
+      var list = localStorage.getItem("engagement");
+      var list_json = list ? JSON.parse(list) : [];
+      fullChart7.series[0].setData(list_json);
+
+      // fullChart7.xAxis[0].addPlotBand(plotBands[0]);
+    }
+  }, 1000);
+}
+
+function drawFullChart8() {
+  // eng area border
+  var startTime = new Date().getTime();
+  fullChart8 = Highcharts.chart("fullchart8", {
     credits: false,
     chart: {
       // type: "area",
-      width: $("#fulldiv4").width() - 40,
-      height: $("#fulldiv4").height() - 40,
+      width: $("#fulldiv8").width() - 40,
+      height: $("#fulldiv8").height() - 40,
     },
 
     title: {
@@ -629,6 +960,10 @@ function drawFullChart4() {
       // },
       crosshairs: true,
       shared: true,
+    },
+
+    legend: {
+      enabled: false,
     },
 
     xAxis: {
@@ -666,26 +1001,26 @@ function drawFullChart4() {
     ],
   });
 
-  fullinterval4 = setInterval(function () {
-    if (fullChart4.series) {
+  fullinterval8 = setInterval(function () {
+    if (fullChart8.series) {
       var list = localStorage.getItem("engagement");
       var list_json = list ? JSON.parse(list) : [];
-      fullChart4.series[0].setData(list_json);
+      fullChart8.series[0].setData(list_json);
       var range_list = localStorage.getItem("eng_range");
       var range_list_json = range_list ? JSON.parse(range_list) : [];
-      fullChart4.series[1].setData(range_list_json);
+      fullChart8.series[1].setData(range_list_json);
     }
   }, 1000);
 }
 
-function drawFullChart5() {
+function drawFullChart9() {
   var startTime = new Date().getTime();
-  fullChart5 = Highcharts.chart("fullchart5", {
+  fullChart9 = Highcharts.chart("fullchart9", {
     credits: false,
     chart: {
       type: "area",
-      width: $("#fulldiv5").width() - 40,
-      height: $("#fulldiv5").height() - 40,
+      width: $("#fulldiv9").width() - 40,
+      height: $("#fulldiv9").height() - 40,
     },
 
     title: {
@@ -705,6 +1040,10 @@ function drawFullChart5() {
     //     <br />► ${this.series.name}: ${this.point.y.toFixed(2)}<br /></div>`;
     //   },
     // },
+
+    legend: {
+      enabled: false,
+    },
 
     xAxis: {
       type: "datetime",
@@ -761,26 +1100,26 @@ function drawFullChart5() {
         data: [502, 635, 809, 947, 1402, 3634, 5268],
       },
       {
-        name: "Energize",
+        name: "Excited",
         data: [106, 107, 111, 133, 221, 767, 1766],
       },
       {
-        name: "Renew",
+        name: "Relaxed",
         data: [163, 203, 276, 408, 547, 729, 628],
       },
       {
-        name: "Burnout",
+        name: "Bored",
         data: [18, 31, 54, 156, 339, 818, 1201],
       },
       {
-        name: "Stress",
+        name: "Anxious",
         data: [2, 2, 2, 6, 13, 30, 46],
       },
     ],
   });
 
-  fullinterval5 = setInterval(function () {
-    if (fullChart5.series) {
+  fullinterval9 = setInterval(function () {
+    if (fullChart9.series) {
       const categories = [
         "neutral",
         "upperRight",
@@ -791,19 +1130,19 @@ function drawFullChart5() {
       categories.forEach((d, i) => {
         var list = localStorage.getItem(d);
         var list_json = list ? JSON.parse(list) : [];
-        fullChart5.series[i].setData(list_json);
+        fullChart9.series[i].setData(list_json);
       });
     }
   }, 1000);
 }
 
-function drawFullChart6() {
+function drawFullChart10() {
   var startTime = new Date().getTime();
-  fullChart6 = Highcharts.chart("fullchart6", {
+  fullChart10 = Highcharts.chart("fullchart10", {
     credits: false,
     chart: {
-      width: $("#fulldiv6").width() - 40,
-      height: $("#fulldiv6").height() - 40,
+      width: $("#fulldiv10").width() - 40,
+      height: $("#fulldiv10").height() - 40,
     },
 
     title: {
@@ -822,6 +1161,10 @@ function drawFullChart6() {
         <img src="https://img.webmd.com/dtmcms/live/webmd/consumer_assets/site_images/article_thumbnails/other/dog_cool_summer_slideshow/1800x1200_dog_cool_summer_other.jpg" width="150"/>
         <br />► ${this.series.name}: ${this.point.y.toFixed(2)}<br /></div>`;
       },
+    },
+
+    legend: {
+      enabled: false,
     },
 
     xAxis: {
@@ -844,18 +1187,18 @@ function drawFullChart6() {
     ],
   });
 
-  fullinterval6 = setInterval(function () {
-    if (fullChart6.series) {
+  fullinterval10 = setInterval(function () {
+    if (fullChart10.series) {
       ["valence", "arousal"].forEach((d, i) => {
         var list = localStorage.getItem(d);
         var list_json = list ? JSON.parse(list) : [];
-        fullChart6.series[i].setData(list_json);
+        fullChart10.series[i].setData(list_json);
       });
     }
   }, 1000);
 }
 
-function drawFullChart7() {
+function drawFullChart11() {
   // minimal heatmap instance configuration
   var heatmapInstance = h337.create({
     // only container is required, the rest will be defaults
@@ -933,6 +1276,13 @@ const containers = [
   "fullchart2",
   "fullchart3",
   "fullchart4",
+  "fullchart5",
+  "fullchart6",
+  "fullchart7",
+  "fullchart8",
+  "fullchart9",
+  "fullchart10",
+  "fullchart11",
 ];
 
 function handleHighlight(container) {
@@ -956,7 +1306,19 @@ function handleUndoHighlight(container) {
 }
 
 function handleDisplayFull(id) {
-  const charts = [fullChart0, fullChart1, fullChart2, fullChart3, fullChart4],
+  const charts = [
+      fullChart0,
+      fullChart1,
+      fullChart2,
+      fullChart3,
+      fullChart4,
+      fullChart5,
+      fullChart6,
+      fullChart7,
+      fullChart8,
+      fullChart9,
+      fullChart10,
+    ],
     grid = document.querySelector(".grid-stack").gridstack;
 
   if ($(`#fullcheck${id.toString()}`)[0].checked) {
@@ -1007,6 +1369,24 @@ function handleDisplayFull(id) {
     } else if (id == 4) {
       clearInterval(fullinterval4);
       drawFullChart4();
+    } else if (id == 5) {
+      clearInterval(fullinterval5);
+      drawFullChart5();
+    } else if (id == 6) {
+      clearInterval(fullinterval6);
+      drawFullChart6();
+    } else if (id == 7) {
+      clearInterval(fullinterval7);
+      drawFullChart7();
+    } else if (id == 8) {
+      clearInterval(fullinterval8);
+      drawFullChart8();
+    } else if (id == 9) {
+      clearInterval(fullinterval9);
+      drawFullChart9();
+    } else if (id == 10) {
+      clearInterval(fullinterval10);
+      drawFullChart10();
     }
   } else {
     // remove highchart
@@ -1020,6 +1400,19 @@ function handleDisplayFull(id) {
       .filter((item) => item.id == `grid-stack-item-${id.toString()}`)[0];
     grid.removeWidget(el);
   }
+}
+
+function handleFullThresholdChange(id) {
+  var charts = { 3: fullChart3, 5: fullChart5, 7: fullChart7 };
+  const threshold = $(`#full-threshold${id}`)[0].value / 10;
+  $(`#full-threshold${id}-text`).html("> " + threshold);
+  charts[id].update({
+    plotOptions: {
+      series: {
+        threshold: threshold,
+      },
+    },
+  });
 }
 
 // function drawFullChart2() {
