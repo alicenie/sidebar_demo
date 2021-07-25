@@ -20,7 +20,9 @@ var fullinterval0,
   },
   slide_range = [],
   current_heatpos = [],
-  start_time;
+  start_time,
+  slides = [],
+  total_ppl = 0;
 // current stage info don't need to be stored in local storage, can be directly sent to chart
 // average of historical data can be calculated each time in drawRadarChart through local storage
 
@@ -55,7 +57,8 @@ function getServerData() {
     success: function (res) {
       console.log("getting data from backend");
       data = JSON.parse(res);
-      console.log(data);
+      console.log("data", data);
+      total_ppl = data.length;
       for (const [key, value] of Object.entries(total)) {
         if (key == "emotion") {
           data.forEach((d) => {
@@ -130,10 +133,45 @@ function getServerData() {
         localStorage.setItem(key, list);
       });
 
-      console.log("localstorage:", localStorage);
+      // var slide_num = data[0]["slides_num"];
+      // console.log(slide_num);
+      // if (slides.length === 0) updateSlides(slide_num, x);
+      // else if (slides[slides.length - 1][0] !== slide_num)
+      //   updateSlides(slide_num, x);
+      // console.log("localstorage:", localStorage);
     },
   }).done(function () {
     console.log("ajax done");
+  });
+}
+
+function updateSlides(slide_num, time) {
+  slides.push([slide_num, time]);
+  const charts = [
+    fullChart2,
+    fullChart3,
+    fullChart4,
+    fullChart5,
+    fullChart6,
+    fullChart7,
+    fullChart8,
+    fullChart9,
+    fullChart10,
+  ];
+  var plotBands = [];
+  for (var i = 1; i < slides.length; i += 2) {
+    plotBands.push({
+      from: slides[i - 1][1],
+      to: slides[i][1],
+      color: "rgba(68, 170, 213, .2)",
+    });
+  }
+  charts.forEach((chart) => {
+    chart.update({
+      xAxis: {
+        plotBands: plotBands,
+      },
+    });
   });
 }
 
@@ -145,6 +183,7 @@ function loadFullWindow() {
     cellHeight: 100,
   });
 
+  // always fit the size of container
   setInterval(function () {
     [...Array(11).keys()].forEach((d, i) => {
       $(`#fullchart${i}`).width($(`#fulldiv${i}`).width() - 40);
@@ -155,14 +194,12 @@ function loadFullWindow() {
     $("#fullchart11").height($("#fulldiv11").height() - 40);
   }, 1000);
 
+  // manually resize chart to fit container
   grid.on("resize", function (e, items) {
     [...Array(11).keys()].forEach((d, i) => {
       $(`#fullchart${i}`).width($(`#fulldiv${i}`).width() - 40);
       $(`#fullchart${i}`).height($(`#fulldiv${i}`).height() - 40);
     });
-
-    $("#fullchart11").width($("#fulldiv11").width() - 40);
-    $("#fullchart11").height($("#fulldiv11").height() - 40);
 
     if (Object.keys(fullChart0).length)
       fullChart0.setSize(
@@ -224,7 +261,7 @@ function loadFullWindow() {
         $("#fulldiv9").height() - 40
       );
 
-    if (Object.keys(fullChart1).length0)
+    if (Object.keys(fullChart10).length0)
       fullChart10.setSize(
         $("#fulldiv10").width() - 40,
         $("#fulldiv10").height() - 40
@@ -278,9 +315,84 @@ function loadFullWindow() {
 
   drawFullChart11();
 
-  // [...Array(11).keys()].forEach((d, i) => {
-  //   handleDisplayFull(d);
-  // });
+  var charts = [
+      fullChart0,
+      fullChart1,
+      fullChart2,
+      fullChart3,
+      fullChart4,
+      fullChart5,
+      fullChart6,
+      fullChart7,
+      fullChart8,
+      fullChart9,
+      fullChart10,
+    ],
+    remove_id = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+
+  // get charts initially displayed
+  var cookieList = document.cookie.split("; ");
+  var fullgazeType,
+    fullgazeName = "full-gaze";
+  cookieList.forEach((val) => {
+    if (val.indexOf(fullgazeName) === 0)
+      fullgazeType = val.substring(fullgazeName.length + 1);
+  });
+  if (fullgazeType === "area") {
+    remove_id = remove_id.filter((d) => d !== 2);
+  }
+  if (fullgazeType === "thres") remove_id = remove_id.filter((d) => d !== 3);
+
+  var fullconfusedType,
+    fullconfusedName = "full-confused";
+  cookieList.forEach((val) => {
+    if (val.indexOf(fullconfusedName) === 0)
+      fullconfusedType = val.substring(fullconfusedName.length + 1);
+  });
+  if (fullconfusedType === "area") remove_id = remove_id.filter((d) => d !== 4);
+  if (fullconfusedType === "thres")
+    remove_id = remove_id.filter((d) => d !== 5);
+
+  var fullengType,
+    fullengName = "full-eng";
+  cookieList.forEach((val) => {
+    if (val.indexOf(fullengName) === 0)
+      fullengType = val.substring(fullengName.length + 1);
+  });
+  if (fullengType === "area") remove_id = remove_id.filter((d) => d !== 6);
+  if (fullengType === "thres") remove_id = remove_id.filter((d) => d !== 7);
+  if (fullengType === "border") remove_id = remove_id.filter((d) => d !== 8);
+
+  var fullemotionType,
+    fullemotionName = "full-emotion";
+  cookieList.forEach((val) => {
+    if (val.indexOf(fullemotionName) === 0)
+      fullemotionType = val.substring(fullemotionName.length + 1);
+  });
+  if (fullemotionType === "area") remove_id = remove_id.filter((d) => d !== 9);
+  if (fullemotionType === "line") remove_id = remove_id.filter((d) => d !== 10);
+  if (fullemotionType === "heat") remove_id = remove_id.filter((d) => d !== 11);
+
+  console.log(remove_id);
+  remove_id.forEach((id) => {
+    if (id == 11) {
+      // hide card container
+      $(`#fullchart${id.toString()}`).hide();
+    } else {
+      // remove highchart
+      charts[id].destroy();
+      console.log("remove", charts[id]);
+    }
+    // remove gridstack widget
+    var el = grid
+      .getGridItems()
+      .filter((item) => item.id == `grid-stack-item-${id.toString()}`)[0];
+    grid.removeWidget(el);
+
+    $(`input#fullcheck${id}`).prop("checked", false);
+  });
+
+  grid.compact();
 }
 
 function handleUnloadFull() {
@@ -290,7 +402,13 @@ function handleUnloadFull() {
 }
 
 function drawFullChart0() {
-  var categories = ["engagement", "emotion", "confusion", "gaze"];
+  // var categories = ["engagement", "emotion", "confusion", "gaze"];
+  var img_path = [
+    "https://i.ibb.co/NYg7pT7/Engagement.png",
+    "https://i.ibb.co/HDtr04M/Emotion.png",
+    "https://i.ibb.co/B6Yc6bf/Confused.png",
+    "https://i.ibb.co/qBnpTZx/Gaze.png",
+  ];
   fullChart0 = new Highcharts.chart("fullchart0", {
     credits: false,
     chart: {
@@ -310,13 +428,19 @@ function drawFullChart0() {
     },
 
     xAxis: {
+      // type: categories,
       tickInterval: 90,
       min: 0,
       max: 360,
       labels: {
         formatter: function () {
-          return categories[this.value / 90];
+          // return categories[this.value / 90];
+          return `<span>   </span><img src="${
+            img_path[this.value / 90]
+          }" style="width:20px;height:20px;" />`;
         },
+        useHTML: true,
+        align: "center",
       },
     },
 
@@ -364,7 +488,7 @@ function drawFullChart0() {
       average[key] /= list_json.length;
     });
 
-    console.log("average", average);
+    // console.log("average", average);
 
     if (fullChart0.series) {
       fullChart0.series[0].setData(Object.values(average));
@@ -374,6 +498,14 @@ function drawFullChart0() {
 }
 
 function drawFullChart1() {
+  var img_path = [
+    "https://i.ibb.co/7y9X07S/confusion.gif",
+    "https://i.ibb.co/Kyvyw1L/drowsiness.gif",
+    "https://i.ibb.co/zbPRnny/headnod.gif",
+    "https://i.ibb.co/SsD93F1/headshake.gif",
+    "https://i.ibb.co/dgq4SBp/smile.gif",
+    "https://i.ibb.co/FhYGtCF/speaking.gif",
+  ];
   fullChart1 = new Highcharts.Chart({
     credits: false,
     chart: {
@@ -396,14 +528,16 @@ function drawFullChart1() {
       text: "Trigger state of the class",
     },
     xAxis: {
-      categories: [
-        "Confusion",
-        "Drowsiness",
-        "Headnod",
-        "Headshake",
-        "Smile",
-        "Speaking",
-      ],
+      categories: [0, 1, 2, 3, 4, 5],
+      labels: {
+        formatter: function () {
+          return `<span>   </span><img src="${
+            img_path[this.value]
+          }" style="width:20px;height:20px;" />`;
+        },
+        useHTML: true,
+        align: "center",
+      },
     },
     yAxis: {
       min: 0,
@@ -604,7 +738,10 @@ function drawFullChart3() {
       {
         lineWidth: 0.5,
         name: "Average level",
-        // threshold: 0.4,
+        data: [
+          [start_time, 1],
+          [start_time + 300000, 0.5],
+        ],
       },
     ],
   });
@@ -1200,7 +1337,7 @@ function drawFullChart10() {
 
 function drawFullChart11() {
   // minimal heatmap instance configuration
-  var heatmapInstance = h337.create({
+  heatmapInstance = h337.create({
     // only container is required, the rest will be defaults
     container: document.getElementById("heatmap_container"),
     maxOpacity: 0.6,
@@ -1210,8 +1347,8 @@ function drawFullChart11() {
 
   // now generate some random data
   var points = [];
-  var max = 0;
-  var width = 300;
+  var max = total_ppl;
+  var width = $("#heatmap_container").width();
   var height = 300;
   var len = 10;
 
@@ -1229,7 +1366,7 @@ function drawFullChart11() {
   // }
   // heatmap data format
   var data = {
-    max: 30,
+    max: total_ppl,
     data: [{ x: 0, y: 0, value: 0 }],
   };
   // if you have a set of datapoints always use setData instead of addData
@@ -1253,8 +1390,8 @@ function drawFullChart11() {
     //   point[key] *= 300; // scale up
     // });
     points = current_heatpos.map((d) => {
-      x = ((d[0] + 1) / 2) * 300;
-      y = ((-d[1] + 1) / 2) * 300;
+      x = ((d[0] + 1) / 2) * width;
+      y = ((-d[1] + 1) / 2) * width;
       return { x, y, value: 10 };
     });
 
@@ -1263,7 +1400,7 @@ function drawFullChart11() {
     //   y: point["arousal"],
     //   value: 10,
     // };
-    console.log("points", points);
+    // console.log("points", points);
     heatmapInstance.addData(points);
     max += 5;
     heatmapInstance.setDataMax(max);
@@ -1322,14 +1459,66 @@ function handleDisplayFull(id) {
     grid = document.querySelector(".grid-stack").gridstack;
 
   if ($(`#fullcheck${id.toString()}`)[0].checked) {
-    grid.addWidget(
-      `<div class="grid-stack-item" id="grid-stack-item-${id.toString()}" gs-w="5" gs-h="3">
+    if (id == 11) {
+      grid.addWidget(
+        `<div class="grid-stack-item" id="grid-stack-item-${id.toString()}" gs-w="3" gs-h="3">
+          <div class="grid-stack-item-content" id="fulldiv${id.toString()}">
+            <div class="card" id="fullchart${id.toString()}" style="justify-items: center; align-items:center;margin:5px 0px 5px 0px; padding: 15px;">
+              <p id="heatmap_title" style="font-size: 17px; text-align: center; padding: 5px;">Emotion Heatmap  
+              <div id="heatmap_container" style="width:200px; height:200px;">
+                            <img src="./emo_heatmap.png" id="heatmap_img"
+                                style="width:200px; height:200px;z-index: 999;" />
+              </div>
+            </div>
+          </div>
+        </div>`
+      );
+      drawFullChart11();
+    } else {
+      grid.addWidget(
+        `<div class="grid-stack-item" id="grid-stack-item-${id.toString()}" gs-w="5" gs-h="3">
         <div class="grid-stack-item-content" id="fulldiv${id.toString()}">
           <div class="card" id="fullchart${id.toString()}" style="margin:5px 0px 5px 0px; padding: 15px;">
           </div>
         </div>
       </div>`
-    );
+      );
+
+      if (id == 0) {
+        clearInterval(fullinterval0);
+        drawFullChart0();
+      } else if (id == 1) {
+        clearInterval(fullinterval1);
+        drawFullChart1();
+      } else if (id == 2) {
+        clearInterval(fullinterval2);
+        drawFullChart2();
+      } else if (id == 3) {
+        clearInterval(fullinterval3);
+        drawFullChart3();
+      } else if (id == 4) {
+        clearInterval(fullinterval4);
+        drawFullChart4();
+      } else if (id == 5) {
+        clearInterval(fullinterval5);
+        drawFullChart5();
+      } else if (id == 6) {
+        clearInterval(fullinterval6);
+        drawFullChart6();
+      } else if (id == 7) {
+        clearInterval(fullinterval7);
+        drawFullChart7();
+      } else if (id == 8) {
+        clearInterval(fullinterval8);
+        drawFullChart8();
+      } else if (id == 9) {
+        clearInterval(fullinterval9);
+        drawFullChart9();
+      } else if (id == 10) {
+        clearInterval(fullinterval10);
+        drawFullChart10();
+      }
+    }
 
     // get theme
     var theme;
@@ -1349,57 +1538,27 @@ function handleDisplayFull(id) {
       for (const [key, value] of Object.entries(theme.full)) {
         console.log(`${key}: ${value}`);
         $(`#${key}`).css("border-color", `rgb(${value})`);
-        $(`#${key}Check`).css("background-color", `rgba(${value},0.5)`);
+        // $(`#${key}Check`).css("background-color", `rgba(${value},0.5)`);
         // $(`#${key}Check`).css("opacity", 0.5);
       }
     });
-
-    if (id == 0) {
-      clearInterval(fullinterval0);
-      drawFullChart0();
-    } else if (id == 1) {
-      clearInterval(fullinterval1);
-      drawFullChart1();
-    } else if (id == 2) {
-      clearInterval(fullinterval2);
-      drawFullChart2();
-    } else if (id == 3) {
-      clearInterval(fullinterval3);
-      drawFullChart3();
-    } else if (id == 4) {
-      clearInterval(fullinterval4);
-      drawFullChart4();
-    } else if (id == 5) {
-      clearInterval(fullinterval5);
-      drawFullChart5();
-    } else if (id == 6) {
-      clearInterval(fullinterval6);
-      drawFullChart6();
-    } else if (id == 7) {
-      clearInterval(fullinterval7);
-      drawFullChart7();
-    } else if (id == 8) {
-      clearInterval(fullinterval8);
-      drawFullChart8();
-    } else if (id == 9) {
-      clearInterval(fullinterval9);
-      drawFullChart9();
-    } else if (id == 10) {
-      clearInterval(fullinterval10);
-      drawFullChart10();
-    }
   } else {
-    // remove highchart
-    charts[id].destroy();
-    console.log("remove", charts[id]);
-    // hide card container
-    // $(`#fullchart${id.toString()}`).hide();
+    if (id == 11) {
+      // hide card container
+      $(`#fullchart${id.toString()}`).hide();
+    } else {
+      // remove highchart
+      charts[id].destroy();
+      console.log("remove", charts[id]);
+    }
+
     // remove gridstack widget
     var el = grid
       .getGridItems()
       .filter((item) => item.id == `grid-stack-item-${id.toString()}`)[0];
     grid.removeWidget(el);
   }
+  grid.compact();
 }
 
 function handleFullThresholdChange(id) {

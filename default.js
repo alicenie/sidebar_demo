@@ -63,51 +63,51 @@ const chart_name = {
   gaze: "defaultchart1",
 };
 
-const themes = {
-  theme_orange: {
-    default: {
-      defaultTrigger: "254,240,217",
-      defaultchart1: "227,74,51",
-      defaultchart2: "252,141,89",
-      defaultchart3: "253,204,138",
-      defaultchart4: "179,0,0",
-    },
-    motor: [
-      [0.1, "#fee8c8"],
-      [0.5, "#fdbb84"],
-      [0.9, "#e34a33"],
-    ],
-  },
-  theme_blue: {
-    default: {
-      defaultTrigger: "239,243,255",
-      defaultchart1: "49,130,189",
-      defaultchart2: "107,174,214",
-      defaultchart3: "189,215,231",
-      defaultchart4: "8,81,156",
-    },
-    motor: [
-      [0.1, "#deebf7"],
-      [0.5, "#9ecae1"],
-      [0.9, "#3182bd"],
-    ],
-  },
-  theme_green: {
-    default: {
-      defaultTrigger: "237,248,233",
-      defaultchart1: "49,163,84",
-      defaultchart2: "116,196,118",
-      defaultchart3: "186,228,179",
-      defaultchart4: "0,109,44",
-    },
+// const themes = {
+//   theme_orange: {
+//     default: {
+//       defaultTrigger: "254,240,217",
+//       defaultchart1: "227,74,51",
+//       defaultchart2: "252,141,89",
+//       defaultchart3: "253,204,138",
+//       defaultchart4: "179,0,0",
+//     },
+//     motor: [
+//       [0.1, "#fee8c8"],
+//       [0.5, "#fdbb84"],
+//       [0.9, "#e34a33"],
+//     ],
+//   },
+//   theme_blue: {
+//     default: {
+//       defaultTrigger: "239,243,255",
+//       defaultchart1: "49,130,189",
+//       defaultchart2: "107,174,214",
+//       defaultchart3: "189,215,231",
+//       defaultchart4: "8,81,156",
+//     },
+//     motor: [
+//       [0.1, "#deebf7"],
+//       [0.5, "#9ecae1"],
+//       [0.9, "#3182bd"],
+//     ],
+//   },
+//   theme_green: {
+//     default: {
+//       defaultTrigger: "237,248,233",
+//       defaultchart1: "49,163,84",
+//       defaultchart2: "116,196,118",
+//       defaultchart3: "186,228,179",
+//       defaultchart4: "0,109,44",
+//     },
 
-    motor: [
-      [0.1, "#e5f5e0"],
-      [0.5, "#a1d99b"],
-      [0.9, "#31a354"],
-    ],
-  },
-};
+//     motor: [
+//       [0.1, "#e5f5e0"],
+//       [0.5, "#a1d99b"],
+//       [0.9, "#31a354"],
+//     ],
+//   },
+// };
 
 function getServerData(theme) {
   // get data from backend
@@ -233,13 +233,13 @@ function loadDefaultWindow() {
   });
   console.log("gaze:", gazeChartType);
 
-  var concenChartType,
-    concenChartName = "concencharttype";
+  var engageChartType,
+    engageChartName = "engagecharttype";
   cookieList.forEach((val) => {
-    if (val.indexOf(concenChartName) === 0)
-      concenChartType = val.substring(concenChartName.length + 1);
+    if (val.indexOf(engageChartName) === 0)
+      engageChartType = val.substring(engageChartName.length + 1);
   });
-  console.log("concen:", concenChartType);
+  console.log("engage:", engageChartType);
 
   var confusedChartType,
     confusedChartName = "confusedcharttype";
@@ -288,92 +288,97 @@ function loadDefaultWindow() {
   };
 
   // get theme
-  var themeid,
-    themeName = "themeid";
-  cookieList.forEach((val) => {
-    if (val.indexOf(themeName) === 0)
-      themeid = val.substring(themeName.length + 1);
+  var theme;
+  $.getJSON("./theme.json", function (data) {
+    var themes = data.theme;
+    // console.log("themes:",themes);
+    var cookieList = document.cookie.split("; ");
+    var themeid,
+      themeName = "themeid";
+    cookieList.forEach((val) => {
+      if (val.indexOf(themeName) === 0)
+        themeid = val.substring(themeName.length + 1);
+    });
+    theme = themes[themeid];
+
+    // set theme
+    for (const [key, value] of Object.entries(theme.default)) {
+      console.log(`${key}: ${value}`);
+      $(`#${key}`).css("border-color", `rgb(${value})`);
+      $(`#${key}Check`).css("background-color", `rgba(${value},0.5)`);
+      // $(`#${key}Check`).css("opacity", 0.5);
+    }
+
+    console.log("theme", theme);
+    setInterval(getServerData, 1000, theme);
+
+    // make it sortable
+    // $("#draggable").draggable();
+    $("#sortable").sortable({
+      // placeholder: "ui-state-highlight",
+    });
+    // $("#sortable").disableSelection();
+
+    // initial width
+    const width = $(window).width - 30;
+    $("#defaultchart2").css("width", width);
+    // $("#defaultchart2").css("height", width + 50);
+    $("#defaultchart3").css("width", width);
+    // $("#defaultchart3").css("height", 120);
+    $("#defaultchart1").css("width", width);
+    // $("#defaultchart1").css("height", width + 50 - 100);
+    $("#defaultTrigger").css("width", width);
+    // $("#defaultTrigger").css("height", width + 50);
+    //   console.log(width);
+
+    // draw default 1 gaze
+    if (barInterval1) clearInterval(barInterval1);
+    if (radialInterval1) clearInterval(radialInterval1);
+    if (motorInterval1) clearInterval(motorInterval1);
+
+    if (gazeChartType == "Motor") {
+      drawMotorChart("defaultchart1", "Gaze", theme);
+      $("#defaultchart1").css("height", 120);
+    } else if (gazeChartType == "Radial") {
+      drawRadialChart("defaultchart1", "Gaze", theme);
+      $("#defaultchart1").css("height", 140);
+    } else {
+      drawBarChart("defaultchart1", "Gaze", theme);
+      $("#defaultchart1").css("height", 90);
+    }
+
+    // draw default 2 confused
+    if (barInterval2) clearInterval(barInterval2);
+    if (radialInterval2) clearInterval(radialInterval2);
+    if (motorInterval2) clearInterval(motorInterval2);
+
+    if (confusedChartType == "Motor") {
+      drawMotorChart("defaultchart2", "Confused", theme);
+      $("#defaultchart2").css("height", 120);
+    } else if (confusedChartType == "Radial") {
+      drawRadialChart("defaultchart2", "Confused", theme);
+      $("#defaultchart2").css("height", 140);
+    } else {
+      drawBarChart("defaultchart2", "Confused", theme);
+      $("#defaultchart2").css("height", 90);
+    }
+
+    // draw default 3 Engagement
+    if (barInterval3) clearInterval(barInterval3);
+    if (radialInterval3) clearInterval(radialInterval3);
+    if (motorInterval3) clearInterval(motorInterval3);
+
+    if (engageChartType == "Motor") {
+      drawMotorChart("defaultchart3", "Engagement", theme);
+      $("#defaultchart3").css("height", 120);
+    } else if (engageChartType == "Radial") {
+      drawRadialChart("defaultchart3", "Engagement", theme);
+      $("#defaultchart3").css("height", 140);
+    } else {
+      drawBarChart("defaultchart3", "Engagement", theme);
+      $("#defaultchart3").css("height", 90);
+    }
   });
-  const theme = themes[themeid];
-  console.log("theme:", theme);
-
-  // set theme
-  for (const [key, value] of Object.entries(theme.default)) {
-    console.log(`${key}: ${value}`);
-    $(`#${key}`).css("border-color", `rgb(${value})`);
-    $(`#${key}Check`).css("background-color", `rgba(${value},0.5)`);
-    // $(`#${key}Check`).css("opacity", 0.5);
-  }
-
-  setInterval(getServerData, 1000, theme);
-  // setInterval(checkAlert, 5000, theme);
-
-  // make it sortable
-  // $("#draggable").draggable();
-  $("#sortable").sortable({
-    // placeholder: "ui-state-highlight",
-  });
-  // $("#sortable").disableSelection();
-
-  // initial width
-  const width = $(window).width - 30;
-  $("#defaultchart2").css("width", width);
-  // $("#defaultchart2").css("height", width + 50);
-  $("#defaultchart3").css("width", width);
-  // $("#defaultchart3").css("height", 120);
-  $("#defaultchart1").css("width", width);
-  // $("#defaultchart1").css("height", width + 50 - 100);
-  $("#defaultTrigger").css("width", width);
-  // $("#defaultTrigger").css("height", width + 50);
-  //   console.log(width);
-
-  // draw default 1 gaze
-  if (barInterval1) clearInterval(barInterval1);
-  if (radialInterval1) clearInterval(radialInterval1);
-  if (motorInterval1) clearInterval(motorInterval1);
-
-  if (gazeChartType == "Motor") {
-    drawMotorChart("defaultchart1", "Gaze", theme);
-    $("#defaultchart1").css("height", 120);
-  } else if (gazeChartType == "Radial") {
-    drawRadialChart("defaultchart1", "Gaze", theme);
-    $("#defaultchart1").css("height", 140);
-  } else {
-    drawBarChart("defaultchart1", "Gaze", theme);
-    $("#defaultchart1").css("height", 90);
-  }
-
-  // draw default 2 confused
-  if (barInterval2) clearInterval(barInterval2);
-  if (radialInterval2) clearInterval(radialInterval2);
-  if (motorInterval2) clearInterval(motorInterval2);
-
-  if (confusedChartType == "Motor") {
-    drawMotorChart("defaultchart2", "Confused", theme);
-    $("#defaultchart2").css("height", 120);
-  } else if (confusedChartType == "Radial") {
-    drawRadialChart("defaultchart2", "Confused", theme);
-    $("#defaultchart2").css("height", 140);
-  } else {
-    drawBarChart("defaultchart2", "Confused", theme);
-    $("#defaultchart2").css("height", 90);
-  }
-
-  // draw default 3 Engagement
-  if (barInterval3) clearInterval(barInterval3);
-  if (radialInterval3) clearInterval(radialInterval3);
-  if (motorInterval3) clearInterval(motorInterval3);
-
-  if (concenChartType == "Motor") {
-    drawMotorChart("defaultchart3", "Engagement", theme);
-    $("#defaultchart3").css("height", 120);
-  } else if (concenChartType == "Radial") {
-    drawRadialChart("defaultchart3", "Engagement", theme);
-    $("#defaultchart3").css("height", 140);
-  } else {
-    drawBarChart("defaultchart3", "Engagement", theme);
-    $("#defaultchart3").css("height", 90);
-  }
 
   // draw default 4 emotion
   // if (barInterval4) clearInterval(barInterval4);
@@ -905,15 +910,15 @@ function handleDefaultChart3() {
 
   if (default3 == 0) {
     drawMotorChart("defaultchart3", "Engagement", theme);
-    document.cookie = "concencharttype=Motor";
+    document.cookie = "engagecharttype=Motor";
     $("#defaultchart3").css("height", 120);
   } else if (default3 == 1) {
     drawRadialChart("defaultchart3", "Engagement", theme);
-    document.cookie = "concencharttype=Radial";
+    document.cookie = "engagecharttype=Radial";
     $("#defaultchart3").css("height", 140);
   } else {
     drawBarChart("defaultchart3", "Engagement", theme);
-    document.cookie = "concencharttype=Bar";
+    document.cookie = "engagecharttype=Bar";
     $("#defaultchart3").css("height", 90);
   }
   default3 = (default3 + 1) % 3;

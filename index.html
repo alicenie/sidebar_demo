@@ -77,7 +77,7 @@
         <br />
 
         <div class="m-2 p-2 card" style="border-color: #e2eafc; border-width: 4px; border-radius: 1rem; width:1000px">
-            <h5>Customize:</h5>
+            <h5>Default View:</h5>
 
             <!-- chart img -->
             <div class="row">
@@ -100,17 +100,17 @@
                 </div>
                 <div class="btn-group col-6" role="group" aria-label="Basic radio toggle button group"
                     onchange="handleRadioChange()">
-                    <input type="radio" class="btn-check" name="concenradio" id="concenradio1" value="Radial"
+                    <input type="radio" class="btn-check" name="engageradio" id="engageradio1" value="Radial"
                         autocomplete="off" checked>
-                    <label class="btn btn-outline-primary" for="concenradio1">Radial</label>
+                    <label class="btn btn-outline-primary" for="engageradio1">Radial</label>
 
-                    <input type="radio" class="btn-check" name="concenradio" id="concenradio2" value="Motor"
+                    <input type="radio" class="btn-check" name="engageradio" id="engageradio2" value="Motor"
                         autocomplete="off">
-                    <label class="btn btn-outline-primary" for="concenradio2">Motor</label>
+                    <label class="btn btn-outline-primary" for="engageradio2">Motor</label>
 
-                    <input type="radio" class="btn-check" name="concenradio" id="concenradio3" value="Bar"
+                    <input type="radio" class="btn-check" name="engageradio" id="engageradio3" value="Bar"
                         autocomplete="off">
-                    <label class="btn btn-outline-primary" for="concenradio3">Bar</label>
+                    <label class="btn btn-outline-primary" for="engageradio3">Bar</label>
                 </div>
                 <div class="col-2">
                     <input type="range" class="form-range" min="0" max="100" value="50" id="engthresh"
@@ -191,6 +191,83 @@
         </div>
 
         <br />
+
+        <div class="m-2 p-2 card" style="border-color: #e2eafc; border-width: 4px; border-radius: 1rem; width:1000px">
+            <h5>Full View:</h5>
+
+            <div class='row m-2'>
+                <div class="col-2">
+                    <p style="font-size: large;">Engagement:</p>
+                </div>
+                <div class="btn-group col-6" role="group" aria-label="Basic radio toggle button group"
+                    onchange="handleRadioChange()">
+                    <input type="radio" class="btn-check" name="full-eng" id="full-eng1" value="area" autocomplete="off"
+                        checked>
+                    <label class="btn btn-outline-primary" for="full-eng1">Area</label>
+
+                    <input type="radio" class="btn-check" name="full-eng" id="full-eng2" value="thres"
+                        autocomplete="off">
+                    <label class="btn btn-outline-primary" for="full-eng2">Thres</label>
+
+                    <input type="radio" class="btn-check" name="full-eng" id="full-eng3" value="border"
+                        autocomplete="off">
+                    <label class="btn btn-outline-primary" for="full-eng3">Border</label>
+                </div>
+            </div>
+
+            <div class='row m-2'>
+                <div class="col-2">
+                    <p style="font-size: large;">Confused:</p>
+                </div>
+                <div class="btn-group col-4" role="group" aria-label="Basic radio toggle button group"
+                    onchange="handleRadioChange()">
+                    <input type="radio" class="btn-check" name="full-confused" id="full-confused1" value="area"
+                        autocomplete="off" checked>
+                    <label class="btn btn-outline-primary" for="full-confused1">Area</label>
+
+                    <input type="radio" class="btn-check" name="full-confused" id="full-confused2" value="thres"
+                        autocomplete="off">
+                    <label class="btn btn-outline-primary" for="full-confused2">Thres</label>
+                </div>
+            </div>
+
+            <div class='row m-2'>
+                <div class="col-2">
+                    <p style="font-size: large;">Gaze:</p>
+                </div>
+                <div class="btn-group col-4" role="group" aria-label="Basic radio toggle button group"
+                    onchange="handleRadioChange()">
+                    <input type="radio" class="btn-check" name="full-gaze" id="full-gaze1" value="area"
+                        autocomplete="off" checked>
+                    <label class="btn btn-outline-primary" for="full-gaze1">Area</label>
+
+                    <input type="radio" class="btn-check" name="full-gaze" id="full-gaze2" value="thres"
+                        autocomplete="off">
+                    <label class="btn btn-outline-primary" for="full-gaze2">Thres</label>
+                </div>
+            </div>
+
+            <div class='row m-2'>
+                <div class="col-2">
+                    <p style="font-size: large;">Emotion:</p>
+                </div>
+                <div class="btn-group col-6" role="group" aria-label="Basic radio toggle button group"
+                    onchange="handleRadioChange()">
+                    <input type="radio" class="btn-check" name="full-emotion" id="full-emotion1" value="area"
+                        autocomplete="off" checked>
+                    <label class="btn btn-outline-primary" for="full-emotion1">Area</label>
+
+                    <input type="radio" class="btn-check" name="full-emotion" id="full-emotion2" value="line"
+                        autocomplete="off">
+                    <label class="btn btn-outline-primary" for="full-emotion2">Line</label>
+
+                    <input type="radio" class="btn-check" name="full-emotion" id="full-emotion3" value="heat"
+                        autocomplete="off">
+                    <label class="btn btn-outline-primary" for="full-emotion3">Heat</label>
+                </div>
+            </div>
+        </div>
+
         <br />
 
         <!-- theme -->

@@ -76,7 +76,7 @@ function handleWindowResize() {
 }
 
 function loadWindow() {
-  // update chart type status
+  // update default chart type status
   var cookieList = document.cookie.split("; ");
   console.log("on load window cookie", cookieList);
 
@@ -91,13 +91,13 @@ function loadWindow() {
     true
   );
 
-  var concenChartType,
-    concenChartName = "concencharttype";
+  var engageChartType,
+    engageChartName = "engagecharttype";
   cookieList.forEach((val) => {
-    if (val.indexOf(concenChartName) === 0)
-      concenChartType = val.substring(concenChartName.length + 1);
+    if (val.indexOf(engageChartName) === 0)
+      engageChartType = val.substring(engageChartName.length + 1);
   });
-  $("input[name='concenradio'][value=" + concenChartType + "]").prop(
+  $("input[name='engageradio'][value=" + engageChartType + "]").prop(
     "checked",
     true
   );
@@ -158,6 +158,48 @@ function loadWindow() {
   $("#" + engThreshName).attr("value", engThresh);
   $(`#${engThreshName}text`).html("> 0." + engThresh);
 
+  // update full chart type
+  var fullgazeType,
+    fullgazeName = "full-gaze";
+  cookieList.forEach((val) => {
+    if (val.indexOf(fullgazeName) === 0)
+      fullgazeType = val.substring(fullgazeName.length + 1);
+  });
+  $("input[name='full-gaze'][value=" + fullgazeType + "]").prop(
+    "checked",
+    true
+  );
+
+  var fullconfusedType,
+    fullconfusedName = "full-confused";
+  cookieList.forEach((val) => {
+    if (val.indexOf(fullconfusedName) === 0)
+      fullconfusedType = val.substring(fullconfusedName.length + 1);
+  });
+  $("input[name='full-confused'][value=" + fullconfusedType + "]").prop(
+    "checked",
+    true
+  );
+
+  var fullengType,
+    fullengName = "full-eng";
+  cookieList.forEach((val) => {
+    if (val.indexOf(fullengName) === 0)
+      fullengType = val.substring(fullengName.length + 1);
+  });
+  $("input[name='full-eng'][value=" + fullengType + "]").prop("checked", true);
+
+  var fullemotionType,
+    fullemotionName = "full-emotion";
+  cookieList.forEach((val) => {
+    if (val.indexOf(fullemotionName) === 0)
+      fullemotionType = val.substring(fullemotionName.length + 1);
+  });
+  $("input[name='full-emotion'][value=" + fullemotionType + "]").prop(
+    "checked",
+    true
+  );
+
   // initial store in cookies when first load
   if (!gazeChartType) {
     gazeChartType = $("input[name='gazeradio']:checked").val();
@@ -169,9 +211,9 @@ function loadWindow() {
     document.cookie = "confusedcharttype=" + confusedChartType;
   }
 
-  if (!concenChartType) {
-    concenChartType = $("input[name='concenradio']:checked").val();
-    document.cookie = "concencharttype=" + concenChartType;
+  if (!engageChartType) {
+    engageChartType = $("input[name='engageradio']:checked").val();
+    document.cookie = "engagecharttype=" + engageChartType;
   }
 
   if (!emoChartType) {
@@ -187,19 +229,25 @@ function loadWindow() {
 
 function handleRadioChange() {
   gazeChartType = $("input[name='gazeradio']:checked").val();
-  console.log("gazeradio", $("input[name='gazeradio']:checked"));
   document.cookie = "gazecharttype=" + gazeChartType;
-  // document.cookie = "gazecharttype=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/";
 
   confusedChartType = $("input[name='confusedradio']:checked").val();
-  console.log("confusedradio:", $("input[name='confusedradio']:checked"));
   document.cookie = "confusedcharttype=" + confusedChartType;
 
-  concenChartType = $("input[name='concenradio']:checked").val();
-  document.cookie = "concencharttype=" + concenChartType;
+  engageChartType = $("input[name='engageradio']:checked").val();
+  document.cookie = "engagecharttype=" + engageChartType;
 
-  emoChartType = $("input[name='emoradio']:checked").val();
-  document.cookie = "emocharttype=" + emoChartType;
+  fullgaze = $("input[name='full-gaze']:checked").val();
+  document.cookie = "full-gaze=" + fullgaze;
+
+  fullconfused = $("input[name='full-confused']:checked").val();
+  document.cookie = "full-confused=" + fullconfused;
+
+  fulleng = $("input[name='full-eng']:checked").val();
+  document.cookie = "full-eng=" + fulleng;
+
+  fullemotion = $("input[name='full-emotion']:checked").val();
+  document.cookie = "full-emotion=" + fullemotion;
 
   console.log(document.cookie);
 }
