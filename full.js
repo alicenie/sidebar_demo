@@ -133,12 +133,12 @@ function getServerData() {
         localStorage.setItem(key, list);
       });
 
-      // var slide_num = data[0]["slides_num"];
-      // console.log(slide_num);
-      // if (slides.length === 0) updateSlides(slide_num, x);
-      // else if (slides[slides.length - 1][0] !== slide_num)
-      //   updateSlides(slide_num, x);
-      // console.log("localstorage:", localStorage);
+      var slide_num = data[0]["slides_num"];
+      console.log(slide_num);
+      if (slides.length === 0) updateSlides(slide_num, x);
+      else if (slides[slides.length - 1][0] !== slide_num)
+        updateSlides(slide_num, x);
+      console.log("localstorage:", localStorage);
     },
   }).done(function () {
     console.log("ajax done");
@@ -167,11 +167,13 @@ function updateSlides(slide_num, time) {
     });
   }
   charts.forEach((chart) => {
-    chart.update({
-      xAxis: {
-        plotBands: plotBands,
-      },
-    });
+    console.log(chart);
+    if (Object.keys(chart).length)
+      chart.update({
+        xAxis: {
+          plotBands: plotBands,
+        },
+      });
   });
 }
 
@@ -404,10 +406,10 @@ function handleUnloadFull() {
 function drawFullChart0() {
   // var categories = ["engagement", "emotion", "confusion", "gaze"];
   var img_path = [
-    "https://i.ibb.co/NYg7pT7/Engagement.png",
-    "https://i.ibb.co/HDtr04M/Emotion.png",
-    "https://i.ibb.co/B6Yc6bf/Confused.png",
-    "https://i.ibb.co/qBnpTZx/Gaze.png",
+    "https://i.ibb.co/h2PTxzp/Engagement.png",
+    "https://i.ibb.co/VVtRXdb/Emotion.png",
+    "https://i.ibb.co/0qJp4NK/Confused.png",
+    "https://i.ibb.co/2NPbFBw/Gaze.png",
   ];
   fullChart0 = new Highcharts.chart("fullchart0", {
     credits: false,
@@ -525,7 +527,8 @@ function drawFullChart1() {
       },
     },
     title: {
-      text: "Trigger state of the class",
+      text: "<img src='https://i.ibb.co/d6b8s7q/trigger.png' style='width:20px;height:20px'/><span>  Trigger</span>",
+      useHTML: true,
     },
     xAxis: {
       categories: [0, 1, 2, 3, 4, 5],
@@ -613,7 +616,8 @@ function drawFullChart2() {
     },
 
     title: {
-      text: "Gaze",
+      text: "<img src='https://i.ibb.co/2NPbFBw/Gaze.png' style='width:20px;height:20px'/><span>  Gaze</span>",
+      useHTML: true,
     },
 
     subtitle: {
@@ -678,7 +682,8 @@ function drawFullChart3() {
     },
 
     title: {
-      text: "Gaze",
+      text: "<img src='https://i.ibb.co/2NPbFBw/Gaze.png' style='width:20px;height:20px'/><span>  Gaze</span>",
+      useHTML: true,
     },
 
     subtitle: {
@@ -769,7 +774,8 @@ function drawFullChart4() {
     },
 
     title: {
-      text: "Confusion",
+      text: "<img src='https://i.ibb.co/0qJp4NK/Confused.png' style='width:20px;height:20px'/><span>  Confusion</span>",
+      useHTML: true,
     },
 
     subtitle: {
@@ -837,7 +843,8 @@ function drawFullChart5() {
     },
 
     title: {
-      text: "Confusion",
+      text: "<img src='https://i.ibb.co/0qJp4NK/Confused.png' style='width:20px;height:20px'/><span>  Confusion</span>",
+      useHTML: true,
     },
 
     subtitle: {
@@ -924,7 +931,8 @@ function drawFullChart6() {
     },
 
     title: {
-      text: "Engagement",
+      text: "<img src='https://i.ibb.co/h2PTxzp/Engagement.png' style='width:20px;height:20px'/><span>  Engagement</span>",
+      useHTML: true,
     },
 
     subtitle: {
@@ -992,7 +1000,8 @@ function drawFullChart7() {
     },
 
     title: {
-      text: "Engagement",
+      text: "<img src='https://i.ibb.co/h2PTxzp/Engagement.png' style='width:20px;height:20px'/><span>  Engagement</span>",
+      useHTML: true,
     },
 
     subtitle: {
@@ -1080,7 +1089,8 @@ function drawFullChart8() {
     },
 
     title: {
-      text: "Engagement",
+      text: "<img src='https://i.ibb.co/h2PTxzp/Engagement.png' style='width:20px;height:20px'/><span>  Engagement</span>",
+      useHTML: true,
     },
 
     subtitle: {
@@ -1161,7 +1171,8 @@ function drawFullChart9() {
     },
 
     title: {
-      text: "Emotion",
+      text: "<img src='https://i.ibb.co/VVtRXdb/Emotion.png' style='width:20px;height:20px'/><span>  Emotion</span>",
+      useHTML: true,
     },
 
     subtitle: {
@@ -1283,7 +1294,8 @@ function drawFullChart10() {
     },
 
     title: {
-      text: "Emotion -- valence and arousal",
+      text: "<img src='https://i.ibb.co/VVtRXdb/Emotion.png' style='width:20px;height:20px'/><span>  Emotion</span>",
+      useHTML: true,
     },
 
     subtitle: {

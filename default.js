@@ -46,9 +46,15 @@ var radialInterval1,
     x: [],
     y: [],
   },
-  alertBorder = true,
-  alertIcon = true,
-  alertSound = true;
+  alertBorder = 0,
+  alertOnce = 0,
+  alertSound = 0,
+  alert = {
+    confusion: false,
+    engagement: false,
+    gaze: false,
+  },
+  themes;
 
 const correspond_name = {
   Confused: "confusion",
@@ -176,16 +182,34 @@ function getServerData(theme) {
   });
 }
 
+var borderIntervals = {
+  confusion: null,
+  gaze: null,
+  engagement: null,
+};
+
 function checkAlert(theme) {
   for (const [key, value] of Object.entries(chartData)) {
+    console.log("alert", alert);
+
     if (value > threshold_value[key]) {
+      // continuous on and alert on => don't trigger
+      if (alertOnce && alert[key]) continue;
+
+      alert[key] = true;
       console.log(key, "value: ", value);
       console.log("thresh: ", threshold_value[key]);
+      console.log(alert);
       if (alertBorder) {
         // shine for 3 times
         var x = 0;
-        var borderInterval = setInterval(function () {
-          if (++x === 3) clearInterval(borderInterval);
+        console.log("border", key);
+        borderIntervals[key] = setInterval(function () {
+          if (x >= 2) {
+            console.log(x, "clearinterval", borderIntervals[key]);
+            clearInterval(borderIntervals[key]);
+            console.log(x, "after clear", borderIntervals[key]);
+          }
           $("#" + chart_name[key]).css("border-width", "5");
           $("#" + chart_name[key]).css("border-color", "orange");
           setTimeout(function () {
@@ -195,6 +219,8 @@ function checkAlert(theme) {
               `rgb(${theme.default[chart_name[key]]})`
             );
           }, 250);
+          console.log("x", x);
+          x++;
         }, 500);
       }
 
@@ -203,13 +229,16 @@ function checkAlert(theme) {
         audio.play();
       }
 
-      if (alertIcon) {
-        // console.log($("image"));
-        // $("image").css("color", "red");
-        // console.log(d3.select("image"));
-        // d3.selectAll("image").style("filter", "invert(100%)");
-      }
+      // if (alertIcon) {
+      // console.log($("image"));
+      // $("image").css("color", "red");
+      // console.log(d3.select("image"));
+      // d3.selectAll("image").style("filter", "invert(100%)");
+      // }
     } else {
+      if (alertOnce) alert[key] = false;
+      console.log("else", key);
+      console.log(alert);
       $("#" + chart_name[key]).css("border-width", "3");
       $("#" + chart_name[key]).css(
         "border-color",
@@ -224,6 +253,27 @@ function loadDefaultWindow() {
   // get the chart type
   var cookieList = document.cookie.split("; ");
   console.log("cookie list:", cookieList);
+
+  var alertBorderName = "alertBorder";
+  cookieList.forEach((val) => {
+    if (val.indexOf(alertBorderName) === 0)
+      alertBorder = parseInt(val.substring(alertBorderName.length + 1));
+  });
+  console.log("alertBorder:", alertBorder);
+
+  var alertOnceName = "alertOnce";
+  cookieList.forEach((val) => {
+    if (val.indexOf(alertOnceName) === 0)
+      alertOnce = parseInt(val.substring(alertOnceName.length + 1));
+  });
+  console.log("alertOnce:", alertOnce);
+
+  var alertSoundName = "alertSound";
+  cookieList.forEach((val) => {
+    if (val.indexOf(alertSoundName) === 0)
+      alertSound = parseInt(val.substring(alertSoundName.length + 1));
+  });
+  console.log("alertSound:", alertSound);
 
   var gazeChartType,
     gazeChartName = "gazecharttype";
@@ -290,7 +340,7 @@ function loadDefaultWindow() {
   // get theme
   var theme;
   $.getJSON("./theme.json", function (data) {
-    var themes = data.theme;
+    themes = data.theme;
     // console.log("themes:",themes);
     var cookieList = document.cookie.split("; ");
     var themeid,
@@ -310,7 +360,7 @@ function loadDefaultWindow() {
     }
 
     console.log("theme", theme);
-    setInterval(getServerData, 1000, theme);
+    setInterval(getServerData, 2000, theme);
 
     // make it sortable
     // $("#draggable").draggable();

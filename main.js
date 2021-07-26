@@ -200,6 +200,34 @@ function loadWindow() {
     true
   );
 
+  // update alert
+  var alertBorder,
+    alertBorderName = "alertBorder";
+  cookieList.forEach((val) => {
+    if (val.indexOf(alertBorderName) === 0)
+      alertBorder = parseInt(val.substring(alertBorderName.length + 1));
+  });
+
+  var alertOnce,
+    alertOnceName = "alertOnce";
+  cookieList.forEach((val) => {
+    if (val.indexOf(alertOnceName) === 0)
+      alertOnce = parseInt(val.substring(alertOnceName.length + 1));
+  });
+  if (!alertBorder)
+    $("input[name='alertType'][value=no]").prop("checked", true);
+  else if (alertOnce)
+    $("input[name='alertType'][value=once]").prop("checked", true);
+  else $("input[name='alertType'][value=always]").prop("checked", true);
+
+  var alertSound,
+    alertSoundName = "alertSound";
+  cookieList.forEach((val) => {
+    if (val.indexOf(alertSoundName) === 0)
+      alertSound = parseInt(val.substring(alertSoundName.length + 1));
+  });
+  if (alertSound) $(`input#alertSound`).prop("checked", true);
+
   // initial store in cookies when first load
   if (!gazeChartType) {
     gazeChartType = $("input[name='gazeradio']:checked").val();
@@ -270,4 +298,13 @@ function handleChartThresholdChange(id) {
   const threshold = $("#" + id)[0].value;
   $(`#${id}text`).html("> 0." + threshold);
   document.cookie = id + "=" + threshold;
+}
+
+function handleAlertChange() {
+  var alertType = $("input[name='alertType']:checked").val();
+  var sound = $("#alertSound")[0].checked;
+
+  document.cookie = "alertBorder=" + (alertType === "no" ? 0 : 1);
+  document.cookie = "alertOnce=" + (alertType === "once" ? 1 : 0);
+  document.cookie = "alertSound=" + (sound ? 1 : 0);
 }

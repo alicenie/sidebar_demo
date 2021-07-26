@@ -92,6 +92,42 @@
                 <div class="col-2" style="text-align: center">
                     <img width=100 class="m-2" src="chart_img/bar.png" />
                 </div>
+
+                <div class="col-2" style="text-align: center">
+                    <img width=50 class="m-2" src="icon_img/alert.png" />
+                    Alert triggered when above threshold
+                </div>
+
+                <div class="col-2">
+                    <div role="group" onchange="handleAlertChange()">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="alertType" id="alertType1" value="no"
+                                checked>
+                            <label class="form-check-label" for="alertType1">
+                                no effect
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="alertType" value="once" id="alertType2">
+                            <label class="form-check-label" for="alertType2">
+                                once
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="alertType" value="always"
+                                id="alertType3">
+                            <label class="form-check-label" for="alertType3">
+                                always
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-check" onchange="handleAlertChange()">
+                        <input class="form-check-input" type="checkbox" value="" id="alertSound">
+                        <label class="form-check-label" for="alertSound">
+                            sound
+                        </label>
+                    </div>
+                </div>
             </div>
 
             <div class='row m-2'>
@@ -203,15 +239,18 @@
                     onchange="handleRadioChange()">
                     <input type="radio" class="btn-check" name="full-eng" id="full-eng1" value="area" autocomplete="off"
                         checked>
-                    <label class="btn btn-outline-primary" for="full-eng1">Area</label>
+                    <label class="btn btn-outline-primary" for="full-eng1"><img width=100
+                            src="icon_img/area.png" /></label>
 
                     <input type="radio" class="btn-check" name="full-eng" id="full-eng2" value="thres"
                         autocomplete="off">
-                    <label class="btn btn-outline-primary" for="full-eng2">Thres</label>
+                    <label class="btn btn-outline-primary" for="full-eng2"><img width=100
+                            src="icon_img/thresh.png" /></label>
 
                     <input type="radio" class="btn-check" name="full-eng" id="full-eng3" value="border"
                         autocomplete="off">
-                    <label class="btn btn-outline-primary" for="full-eng3">Border</label>
+                    <label class="btn btn-outline-primary" for="full-eng3"><img width=100
+                            src="icon_img/border.png" /></label>
                 </div>
             </div>
 
@@ -223,11 +262,13 @@
                     onchange="handleRadioChange()">
                     <input type="radio" class="btn-check" name="full-confused" id="full-confused1" value="area"
                         autocomplete="off" checked>
-                    <label class="btn btn-outline-primary" for="full-confused1">Area</label>
+                    <label class="btn btn-outline-primary" for="full-confused1"><img width=100
+                            src="icon_img/area.png" /></label>
 
                     <input type="radio" class="btn-check" name="full-confused" id="full-confused2" value="thres"
                         autocomplete="off">
-                    <label class="btn btn-outline-primary" for="full-confused2">Thres</label>
+                    <label class="btn btn-outline-primary" for="full-confused2"><img width=100
+                            src="icon_img/thresh.png" /></label>
                 </div>
             </div>
 
@@ -239,11 +280,13 @@
                     onchange="handleRadioChange()">
                     <input type="radio" class="btn-check" name="full-gaze" id="full-gaze1" value="area"
                         autocomplete="off" checked>
-                    <label class="btn btn-outline-primary" for="full-gaze1">Area</label>
+                    <label class="btn btn-outline-primary" for="full-gaze1"><img width=100
+                            src="icon_img/area.png" /></label>
 
                     <input type="radio" class="btn-check" name="full-gaze" id="full-gaze2" value="thres"
                         autocomplete="off">
-                    <label class="btn btn-outline-primary" for="full-gaze2">Thres</label>
+                    <label class="btn btn-outline-primary" for="full-gaze2"><img width=100
+                            src="icon_img/thresh.png" /></label>
                 </div>
             </div>
 
@@ -254,16 +297,19 @@
                 <div class="btn-group col-6" role="group" aria-label="Basic radio toggle button group"
                     onchange="handleRadioChange()">
                     <input type="radio" class="btn-check" name="full-emotion" id="full-emotion1" value="area"
-                        autocomplete="off" checked>
-                    <label class="btn btn-outline-primary" for="full-emotion1">Area</label>
+                        autocomplete="off" style="height: 100;align-self: center;" checked>
+                    <label class="btn btn-outline-primary" for="full-emotion1"><img width=100 height="100"
+                            src="icon_img/area.png" /></label>
 
                     <input type="radio" class="btn-check" name="full-emotion" id="full-emotion2" value="line"
                         autocomplete="off">
-                    <label class="btn btn-outline-primary" for="full-emotion2">Line</label>
+                    <label class="btn btn-outline-primary" for="full-emotion2"><img width=100 height="100"
+                            src="icon_img/line.png" /></label>
 
                     <input type="radio" class="btn-check" name="full-emotion" id="full-emotion3" value="heat"
                         autocomplete="off">
-                    <label class="btn btn-outline-primary" for="full-emotion3">Heat</label>
+                    <label class="btn btn-outline-primary" for="full-emotion3"><img width=100
+                            src="icon_img/heat.png" /></label>
                 </div>
             </div>
         </div>
