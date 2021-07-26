@@ -351,6 +351,15 @@ function loadDefaultWindow() {
     });
     theme = themes[themeid];
 
+    // check for customization
+    var engcolor,
+      engcolorName = "engcolor";
+    cookieList.forEach((val) => {
+      if (val.indexOf(engcolorName) === 0)
+        engcolor = val.substring(engcolorName.length + 1);
+    });
+    if (engcolor) theme["default"]["defaultchart1"] = engcolor;
+
     // set theme
     for (const [key, value] of Object.entries(theme.default)) {
       console.log(`${key}: ${value}`);

@@ -76,6 +76,14 @@ function handleWindowResize() {
 }
 
 function loadWindow() {
+  $("#eng-cp")
+    .colorpicker({ format: "rgb" })
+    .on("colorpickerChange", function (e) {
+      var color = e.color.string().split("(")[1].split(")")[0];
+      console.log(color);
+      if ($("#eng-cp-radio")[0].checked) document.cookie = "engcolor=" + color;
+    });
+
   // update default chart type status
   var cookieList = document.cookie.split("; ");
   console.log("on load window cookie", cookieList);

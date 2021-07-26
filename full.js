@@ -1190,7 +1190,7 @@ function drawFullChart9() {
     // },
 
     legend: {
-      enabled: false,
+      enabled: true,
     },
 
     xAxis: {
