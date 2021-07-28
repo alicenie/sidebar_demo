@@ -192,7 +192,9 @@ function checkAlert(theme) {
   for (const [key, value] of Object.entries(chartData)) {
     console.log("alert", alert);
 
-    if (value > threshold_value[key]) {
+    var triggerValue = threshold_value[key] - value;
+    if (key === "confusion") triggerValue = -triggerValue;
+    if (triggerValue > 0) {
       // continuous on and alert on => don't trigger
       if (alertOnce && alert[key]) continue;
 
@@ -201,27 +203,33 @@ function checkAlert(theme) {
       console.log("thresh: ", threshold_value[key]);
       console.log(alert);
       if (alertBorder) {
-        // shine for 3 times
-        var x = 0;
-        console.log("border", key);
-        borderIntervals[key] = setInterval(function () {
-          if (x >= 2) {
-            console.log(x, "clearinterval", borderIntervals[key]);
-            clearInterval(borderIntervals[key]);
-            console.log(x, "after clear", borderIntervals[key]);
-          }
+        if (alertOnce) {
+          // shine for 3 times
+          var x = 0;
+          console.log("border", key);
+          borderIntervals[key] = setInterval(function () {
+            if (x >= 2) {
+              console.log(x, "clearinterval", borderIntervals[key]);
+              clearInterval(borderIntervals[key]);
+              console.log(x, "after clear", borderIntervals[key]);
+            }
+            $("#" + chart_name[key]).css("border-width", "5");
+            $("#" + chart_name[key]).css("border-color", "orange");
+            setTimeout(function () {
+              $("#" + chart_name[key]).css("border-width", "3");
+              $("#" + chart_name[key]).css(
+                "border-color",
+                `rgb(${theme.default[chart_name[key]]})`
+              );
+            }, 250);
+            console.log("x", x);
+            x++;
+          }, 500);
+        } else {
+          // always shine
           $("#" + chart_name[key]).css("border-width", "5");
           $("#" + chart_name[key]).css("border-color", "orange");
-          setTimeout(function () {
-            $("#" + chart_name[key]).css("border-width", "3");
-            $("#" + chart_name[key]).css(
-              "border-color",
-              `rgb(${theme.default[chart_name[key]]})`
-            );
-          }, 250);
-          console.log("x", x);
-          x++;
-        }, 500);
+        }
       }
 
       if (alertSound) {
@@ -358,7 +366,23 @@ function loadDefaultWindow() {
       if (val.indexOf(engcolorName) === 0)
         engcolor = val.substring(engcolorName.length + 1);
     });
-    if (engcolor) theme["default"]["defaultchart1"] = engcolor;
+    if (engcolor) theme["default"]["defaultchart3"] = engcolor;
+
+    var confcolor,
+      confcolorName = "confcolor";
+    cookieList.forEach((val) => {
+      if (val.indexOf(confcolorName) === 0)
+        confcolor = val.substring(confcolorName.length + 1);
+    });
+    if (confcolor) theme["default"]["defaultchart2"] = confcolor;
+
+    var gazecolor,
+      gazecolorName = "gazecolor";
+    cookieList.forEach((val) => {
+      if (val.indexOf(gazecolorName) === 0)
+        gazecolor = val.substring(gazecolorName.length + 1);
+    });
+    if (gazecolor) theme["default"]["defaultchart1"] = gazecolor;
 
     // set theme
     for (const [key, value] of Object.entries(theme.default)) {

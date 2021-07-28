@@ -95,41 +95,55 @@
                     <img width=100 class="m-2" src="chart_img/bar.png" />
                 </div>
 
-                <div class="col-2" style="text-align: center">
-                    <img width=50 class="m-2" src="icon_img/alert.png" />
-                    Alert triggered when above threshold
+                <div class="col-2" style="text-align: center;padding:0px;align-self: center;">
+                    <button id="fullsize" type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        <span style="font-size: 14px;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                fill="currentColor" class="bi bi-bell" viewBox="0 0 16 16">
+                                <path
+                                    d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2zM8 1.918l-.797.161A4.002 4.002 0 0 0 4 6c0 .628-.134 2.197-.459 3.742-.16.767-.376 1.566-.663 2.258h10.244c-.287-.692-.502-1.49-.663-2.258C12.134 8.197 12 6.628 12 6a4.002 4.002 0 0 0-3.203-3.92L8 1.917zM14.22 12c.223.447.481.801.78 1H1c.299-.199.557-.553.78-1C2.68 10.2 3 6.88 3 6c0-2.42 1.72-4.44 4.005-4.901a1 1 0 1 1 1.99 0A5.002 5.002 0 0 1 13 6c0 .88.32 4.2 1.22 6z" />
+                            </svg> when >/&lt threshold</span>
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="fullsize">
+                        <li><a class="dropdown-item">
+                                <div role="group" onchange="handleAlertChange()">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="alertType" id="alertType1"
+                                            value="no" checked>
+                                        <label class="form-check-label" for="alertType1">
+                                            no effect
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="alertType" value="once"
+                                            id="alertType2">
+                                        <label class="form-check-label" for="alertType2">
+                                            once
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="alertType" value="always"
+                                            id="alertType3">
+                                        <label class="form-check-label" for="alertType3">
+                                            always
+                                        </label>
+                                    </div>
+                                </div>
+                            </a></li>
+                        <li><a class="dropdown-item">
+                                <div class="form-check" onchange="handleAlertChange()">
+                                    <input class="form-check-input" type="checkbox" value="" id="alertSound">
+                                    <label class="form-check-label" for="alertSound">
+                                        sound
+                                    </label>
+                                </div>
+                            </a></li>
+                    </ul>
+                    <!-- <img width=20 class="m-2" src="icon_img/alert.png" /> -->
+                    <!-- <span style="padding: 0;">triggered when >/&lt threshold</span> -->
                 </div>
 
-                <div class="col-2">
-                    <div role="group" onchange="handleAlertChange()">
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="alertType" id="alertType1" value="no"
-                                checked>
-                            <label class="form-check-label" for="alertType1">
-                                no effect
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="alertType" value="once" id="alertType2">
-                            <label class="form-check-label" for="alertType2">
-                                once
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="alertType" value="always"
-                                id="alertType3">
-                            <label class="form-check-label" for="alertType3">
-                                always
-                            </label>
-                        </div>
-                    </div>
-                    <div class="form-check" onchange="handleAlertChange()">
-                        <input class="form-check-input" type="checkbox" value="" id="alertSound">
-                        <label class="form-check-label" for="alertSound">
-                            sound
-                        </label>
-                    </div>
-                </div>
+                <div class="col-2" style="text-align:center;">Color Customization (Optional)</div>
             </div>
 
             <div class='row m-2'>
@@ -150,17 +164,19 @@
                         autocomplete="off">
                     <label class="btn btn-outline-primary" for="engageradio3">Bar</label>
                 </div>
-                <div class="col-2">
+                <div class="col-3">
                     <input type="range" class="form-range" min="0" max="100" value="50" id="engthresh"
                         style="width:5rem" onchange="handleChartThresholdChange('engthresh')">
-                    <label id="engthreshtext" for="engthresh" class="form-label">> 0.50</label>
+                    <label id="engthreshtext" for="engthresh" class="form-label">&lt 50%</label>
                 </div>
-                <div class="col-1" id="eng-cp">
+                <div class="col-1" style="margin-left:-30px;" id="eng-cp">
                     <div class="form-check form-switch">
-                        <input class="form-check-input" type="checkbox" id="eng-cp-radio">
-                        <label class="form-check-label" for="eng-cp-radio">on</label>
+                        <input class="form-check-input" type="checkbox" id="eng-cp-radio"
+                            onchange="handleColorpickerRadio()">
+                        <div class="input-group">
+                            <span class="input-group-text colorpicker-input-addon"><i></i></span>
+                        </div>
                     </div>
-                    <span class="input-group-text colorpicker-input-addon"><i></i></span>
                 </div>
             </div>
 
@@ -182,10 +198,19 @@
                         autocomplete="off">
                     <label class="btn btn-outline-primary" for="confusedradio3">Bar</label>
                 </div>
-                <div class="col-2">
+                <div class="col-3">
                     <input type="range" class="form-range" min="0" max="100" value="50" id="conthresh"
                         style="width:5rem" onchange="handleChartThresholdChange('conthresh')">
-                    <label id="conthreshtext" for="conthresh" class="form-label">> 0.50</label>
+                    <label id="conthreshtext" for="conthresh" class="form-label">> 50%</label>
+                </div>
+                <div class="col-1" style="margin-left:-30px;" id="conf-cp">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="conf-cp-radio"
+                            onchange="handleColorpickerRadio()">
+                        <div class="input-group">
+                            <span class="input-group-text colorpicker-input-addon"><i></i></span>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -207,11 +232,19 @@
                         autocomplete="off">
                     <label class="btn btn-outline-primary" for="gazeradio3">Bar</label>
                 </div>
-                <div class="col-2">
+                <div class="col-3">
                     <input type="range" class="form-range" min="0" max="100" value="50" id="gazethresh"
                         style="width:5rem" onchange="handleChartThresholdChange('gazethresh')">
-                    <label id="gazethreshtext" for="gazethresh" class="form-label">> 0.50</label>
-
+                    <label id="gazethreshtext" for="gazethresh" class="form-label">&lt 50%</label>
+                </div>
+                <div class="col-1" style="margin-left:-30px;" id="gaze-cp">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="gaze-cp-radio"
+                            onchange="handleColorpickerRadio()">
+                        <div class="input-group">
+                            <span class="input-group-text colorpicker-input-addon"><i></i></span>
+                        </div>
+                    </div>
                 </div>
             </div>
 

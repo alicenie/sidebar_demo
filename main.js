@@ -76,14 +76,6 @@ function handleWindowResize() {
 }
 
 function loadWindow() {
-  $("#eng-cp")
-    .colorpicker({ format: "rgb" })
-    .on("colorpickerChange", function (e) {
-      var color = e.color.string().split("(")[1].split(")")[0];
-      console.log(color);
-      if ($("#eng-cp-radio")[0].checked) document.cookie = "engcolor=" + color;
-    });
-
   // update default chart type status
   var cookieList = document.cookie.split("; ");
   console.log("on load window cookie", cookieList);
@@ -146,7 +138,7 @@ function loadWindow() {
       gazeThresh = val.substring(gazeThreshName.length + 1);
   });
   $("#" + gazeThreshName).attr("value", gazeThresh);
-  $(`#${gazeThreshName}text`).html("> 0." + gazeThresh);
+  $(`#${gazeThreshName}text`).html("< " + gazeThresh + "%");
 
   var conThresh,
     conThreshName = "conthresh";
@@ -155,7 +147,7 @@ function loadWindow() {
       conThresh = val.substring(conThreshName.length + 1);
   });
   $("#" + conThreshName).attr("value", conThresh);
-  $(`#${conThreshName}text`).html("> 0." + conThresh);
+  $(`#${conThreshName}text`).html("> " + conThresh + "%");
 
   var engThresh,
     engThreshName = "engthresh";
@@ -164,7 +156,7 @@ function loadWindow() {
       engThresh = val.substring(engThreshName.length + 1);
   });
   $("#" + engThreshName).attr("value", engThresh);
-  $(`#${engThreshName}text`).html("> 0." + engThresh);
+  $(`#${engThreshName}text`).html("< " + engThresh + "%");
 
   // update full chart type
   var fullgazeType,
@@ -234,7 +226,61 @@ function loadWindow() {
     if (val.indexOf(alertSoundName) === 0)
       alertSound = parseInt(val.substring(alertSoundName.length + 1));
   });
-  if (alertSound) $(`input#alertSound`).prop("checked", true);
+  if (alertSound) $("input#alertSound").prop("checked", true);
+
+  // updata colorpicker
+  var engcolor,
+    engcolorName = "engcolor";
+  cookieList.forEach((val) => {
+    if (val.indexOf(engcolorName) === 0)
+      engcolor = val.substring(engcolorName.length + 1);
+  });
+  if (engcolor) {
+    $("input#eng-cp-radio").prop("checked", true);
+  }
+  $("#eng-cp")
+    .colorpicker({ format: "rgb", color: `rgb(${engcolor})` })
+    .on("colorpickerChange colorpickerCreate", function (e) {
+      var color = e.color.string().split("(")[1].split(")")[0];
+      console.log(color);
+      if ($("#eng-cp-radio")[0].checked) document.cookie = "engcolor=" + color;
+    });
+
+  var confcolor,
+    confcolorName = "confcolor";
+  cookieList.forEach((val) => {
+    if (val.indexOf(confcolorName) === 0)
+      confcolor = val.substring(confcolorName.length + 1);
+  });
+  if (confcolor) {
+    $("input#conf-cp-radio").prop("checked", true);
+  }
+  $("#conf-cp")
+    .colorpicker({ format: "rgb", color: `rgb(${confcolor})` })
+    .on("colorpickerChange colorpickerCreate", function (e) {
+      var color = e.color.string().split("(")[1].split(")")[0];
+      console.log(color);
+      if ($("#conf-cp-radio")[0].checked)
+        document.cookie = "confcolor=" + color;
+    });
+
+  var gazecolor,
+    gazecolorName = "gazecolor";
+  cookieList.forEach((val) => {
+    if (val.indexOf(gazecolorName) === 0)
+      gazecolor = val.substring(gazecolorName.length + 1);
+  });
+  if (gazecolor) {
+    $("input#gaze-cp-radio").prop("checked", true);
+  }
+  $("#gaze-cp")
+    .colorpicker({ format: "rgb", color: `rgb(${gazecolor})` })
+    .on("colorpickerChange colorpickerCreate", function (e) {
+      var color = e.color.string().split("(")[1].split(")")[0];
+      console.log(color);
+      if ($("#gaze-cp-radio")[0].checked)
+        document.cookie = "gazecolor=" + color;
+    });
 
   // initial store in cookies when first load
   if (!gazeChartType) {
@@ -304,7 +350,8 @@ function handleThemeChange() {
 
 function handleChartThresholdChange(id) {
   const threshold = $("#" + id)[0].value;
-  $(`#${id}text`).html("> 0." + threshold);
+  if (id == "engthresh") $(`#${id}text`).html("> " + threshold + "%");
+  else $(`#${id}text`).html("< " + threshold + "%");
   document.cookie = id + "=" + threshold;
 }
 
@@ -315,4 +362,10 @@ function handleAlertChange() {
   document.cookie = "alertBorder=" + (alertType === "no" ? 0 : 1);
   document.cookie = "alertOnce=" + (alertType === "once" ? 1 : 0);
   document.cookie = "alertSound=" + (sound ? 1 : 0);
+}
+
+function handleColorpickerRadio() {
+  if (!$("#eng-cp-radio")[0].checked) document.cookie = "engcolor=";
+  if (!$("#conf-cp-radio")[0].checked) document.cookie = "confcolor=";
+  if (!$("#gaze-cp-radio")[0].checked) document.cookie = "gazecolor=";
 }

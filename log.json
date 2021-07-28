@@ -1,0 +1,33 @@
+{
+  "student_status": {
+    "time1": {
+      "engagement": [0.4, 0.5, 0.2, 0.1],
+      "confusion": [0.1, 0.2, 0, 1],
+      "gaze": []
+    },
+    "time2": {
+      "engagement": [0.4, 0.5, 0.2, 0.1],
+      "confusion": [0.1, 0.2, 0, 1],
+      "gaze": []
+    }
+  },
+  "user_behavior": [
+    {
+      "time": 1,
+      "action": "resize",
+      "chart": "fullchart1",
+      "from": [3, 2],
+      "to": [5, 4]
+    },
+    {
+      "time": 2,
+      "action": "drag",
+      "chart": "fullchart2",
+      "from": [3, 0],
+      "to": [1, 2]
+    },
+    { "time": 3, "action": "to_default" },
+    { "time": 3, "action": "to_full" },
+    { "time": 3, "action": "to_dashboard" }
+  ]
+}
