@@ -164,6 +164,11 @@ function getServerData(update, alert, theme = null) {
         gaze: [],
         valence: [],
         arousal: [],
+        drowsiness: [],
+        headnod: [],
+        headshake: [],
+        smile: [],
+        speaking: [],
       };
 
       for (const [key, value] of Object.entries(total)) {
@@ -219,7 +224,6 @@ function getServerData(update, alert, theme = null) {
           current[key] = (current[key] + 1) / 2;
         } else {
           current[key] = total[key] / data.length;
-          new_log[key].push(current[key]);
         }
       });
       console.log("current", current); // for radar chart
@@ -262,7 +266,6 @@ function getServerData(update, alert, theme = null) {
         list_json.push([cur_time, cur_emo_line[key] / data.length]);
         list = JSON.stringify(list_json);
         localStorage.setItem(key, list);
-        new_log[key].push(cur_emo_line[key] / data.length);
       });
 
       var slide_num = data[0]["slides_num"];
@@ -275,6 +278,15 @@ function getServerData(update, alert, theme = null) {
       list = JSON.stringify(slides);
       localStorage.setItem("slides", list);
 
+      // calculate average for log
+      for (const [key, value] of Object.entries(new_log)) {
+        if (key !== "time") {
+          let sum = value.reduce(function (a, b) {
+            return parseFloat(a) + parseFloat(b);
+          }, 0);
+          new_log[key].push(sum / value.length);
+        }
+      }
       students_log.push(new_log);
       localStorage.setItem("students_log", JSON.stringify(students_log));
 
